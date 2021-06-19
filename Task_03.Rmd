@@ -1,0 +1,529 @@
+---
+title: "GRIP SPARK FOUNDATION TASK 3"
+output: html_notebook
+author: ASWIN.B
+task:   Exploratory Data analysisp-Retail 
+---
+
+Importing Required Libraries
+```{r}
+library(heatmap3)
+library(ggthemes)
+library(sf)
+library(raster)
+library(dplyr)
+library(spData)
+library(spDataLarge)
+library(tmap)
+library(leaflet) 
+library(plotly)
+library(dplyr)
+library(readr)
+library(Hmisc)
+library(corrplot)
+library(reshape2)
+library("PerformanceAnalytics")
+library(ggplot2)
+library(tidyverse)
+library(GGally)
+library(plotrix)
+library(lattice)
+library(maps)
+library(ggthemes)
+library(tmaptools)
+library(htmltools)
+library(mapproj)
+library(ggmap)
+library(mapdata)
+library(leaflet.extras)
+library(patchwork)
+library(Rmisc)
+library(gridExtra)
+
+```
+
+Reading the dataset 
+
+```{r}
+library(readr)
+Task3 <- read_csv("Task3.csv")
+View(Task3)
+```
+
+Analyzing the data set
+
+```{r}
+
+Dataset=Task3
+colnames(Dataset)
+summary(Dataset)
+nrow(Dataset)
+```
+
+Deleting the duplicate data
+```{r}
+di=Dataset[duplicated(Dataset),]
+Dataset=Dataset[!duplicated(Dataset),]
+nrow(Dataset)
+```
+We can see that our rows has been reduced from 9994 to 9977.
+
+```{r}
+describe(Dataset)
+```
+
+Finding covariance and Correlation of numerical columns
+```{r}
+Newdata=Dataset[,c(10:13)]
+round(Newdata,2)
+head(Newdata)
+cor(Newdata)
+cov(Newdata)
+
+```
+
+Ploting the correlation
+
+```{r}
+corrplot(cor(Newdata),method = 'circle')
+corrplot(cor(Newdata), type = "upper", order = "hclust", 
+         tl.col = "black", tl.srt = 45)
+```
+
+Heat map and correlation chart for checking correlation
+
+```{r}
+chart.Correlation(Newdata, histogram = TRUE, pch = 19)
+col<- colorRampPalette(c("blue", "white", "dark red"))(25)
+heatmap(x =cor(Newdata) , col = col, symm = TRUE)
+
+```
+```{r}
+melted_Newdata <- melt(cor(Newdata))
+head(melted_Newdata)
+
+melted_Newdata$value= round(melted_Newdata$value,2)
+ggplot(data = melted_Newdata, aes(x=Var1, y=Var2, fill=value)) + 
+  geom_tile()+geom_text(aes(Var2, Var1, label = value), color = "black", size = 4)
+```
+Analyzing Ship mode
+```{r}
+count1 <- as.data.frame(table(Dataset$`Ship Mode`))
+ggplot(count1, aes(x = Var1, y = Freq, fill = Var1)) +  # Plot with values on top
+  geom_bar(stat = "identity") +
+  geom_text(aes(label = Freq), vjust = 0)
+```
+Correlation of sales with respect to quantity , profits , discount
+```{r}
+ggpairs(Dataset, columns = 10:13, ggplot2::aes(colour=`Ship Mode`)) 
+```
+
+
+Box plots of Profit vs Ship mode
+```{r}
+ggplot(Dataset,aes(reorder(`Ship Mode`,-Profit,median),Profit))+
+      geom_boxplot()+
+      coord_flip()+
+      scale_x_discrete("`Ship Mode`")
+
+```
+Count of different categories based on shipment
+```{r}
+ggplot(Dataset,aes(x=`Ship Mode`,fill= Category)) +
+       geom_bar(stat="count")
+```
+Segment Wise Analysis
+```{r}
+Total_Segment = aggregate(c(Dataset['Quantity'],Dataset['Sales'],Dataset['Discount'],Dataset['Profit']), by =Dataset['Segment'],FUN = sum)
+View(Total_Segment) 
+```
+Count of Different segments
+```{r}
+count2 <- as.data.frame(table(Dataset$Segment))
+ggplot(count2, aes(x = Var1, y = Freq, fill = Var1)) +  # Plot with values on top
+  geom_bar(stat = "identity") +
+  geom_text(aes(label = Freq), vjust = 0)
+```
+Correlation of numerical columns with respect to segments
+```{r}
+ggpairs(Dataset, columns = 10:13, ggplot2::aes(colour=Segment))
+```
+Box plots of different segments based on profits
+```{r}
+ggplot(Dataset,aes(reorder(Segment,-Profit,median),Profit))+
+  geom_boxplot()+
+  coord_flip()+
+  scale_x_discrete("Segment")
+```
+
+Quantity vs Profit
+```{r}
+plot(Dataset$Quantity,
+     Dataset$Profit,
+     pch = 18,
+     col = 2,
+     cex = 1.2,
+     xlab = "Quantity",
+     ylab = "Profit")
+cor(Dataset$Quantity,Dataset$Profit)
+
+```
+
+sales vs profit
+```{r}
+plot(Dataset$Sales,
+     Dataset$Profit,
+     pch = 17,
+     col = 3,
+     cex = 1.2,
+     xlab = "Sales",
+     ylab = "Profit")
+cor(Dataset$Sales,Dataset$Profit)
+```
+Category Wise Analysis
+
+```{r}
+Obs_cat = aggregate(c(Dataset['Quantity'],Dataset['Sales'],Dataset['Discount'],Dataset['Profit']), by =Dataset[8],FUN = sum)
+Obs_cat$PP=round(((Obs_cat$Profit/sum(Obs_cat$Profit))*100),2)
+View(Obs_cat)
+```
+
+Count of categories based on subcategories
+```{r}
+ggplot(Dataset,aes(x=Category,fill= `Sub-Category`)) +
+  geom_bar(stat="count")
+```
+Correlation associated with different categories
+```{r}
+ggpairs(Dataset, columns = 10:13, ggplot2::aes(colour=Category))
+```
+
+Total No of different categories 
+```{r}
+count3 <- as.data.frame(table(Dataset$Category))
+ggplot(count3, aes(x = Var1, y = Freq, fill = Var1)) +  # Plot with values on top
+  geom_bar(stat = "identity") +
+  geom_text(aes(label = Freq), vjust = 0)
+```
+
+Box plot of profit vs category
+```{r}
+ggplot(Dataset,aes(reorder(Category,-Profit, median),Profit))+
+  geom_boxplot(width=0.5)+
+  coord_flip()+
+  scale_x_discrete("Category")
+```
+
+
+Profit percent of Different Categories
+```{r}
+ggplot(Obs_cat, aes(x=Category, y=PP, fill=Category)) + 
+  geom_bar(stat="identity", position=position_dodge()) +
+  geom_errorbar(aes(ymin=PP-sd(PP), ymax=PP+sd(PP)), width=.1,
+                position=position_dodge(.9))
+
+```
+Subcategory Wise Analysis
+
+```{r}
+Obs_Subcat = aggregate(c(Dataset['Quantity'],Dataset['Sales'],Dataset['Discount'],Dataset['Profit']), by =Dataset[9],FUN = sum)
+Obs_Subcat$PG=round(((Obs_Subcat$Quantity/sum(Obs_Subcat$Quantity))*100),0)
+Obs_Subcat$PP=round(((Obs_Subcat$Profit/sum(Obs_Subcat$Profit))*100),2)
+View(Obs_Subcat)
+```
+
+Total quantity sold in different categories
+```{r}
+pie = ggplot(Obs_Subcat, aes(x="", y=-PG, fill=reorder(`Sub-Category`,-PG))) + geom_bar(stat="identity",color="black")
+
+# Convert to pie (polar coordinates) and add labels
+pie = pie + coord_polar("y") + 
+      theme_void()
+
+# Add color scale (hex colors)
+#pie = pie + scale_fill_manual(values=c("#55DDE0", "#33658A", "#2F4858", "#F6AE2D", "#F26419", "#999999")) 
+
+# Remove labels and add title
+pie = pie + labs(x = NULL, y = NULL, fill = NULL, title = "Quantity sold in different categories")
+
+# Tidy up the theme
+pie = pie + theme_classic() + theme(axis.line = element_blank(),
+                                    axis.text = element_blank(),
+                                    axis.ticks = element_blank(),
+                                    plot.title = element_text(hjust = 0.5, color = "#666666"))
+pie
+```
+
+Analysis of Subcategory based on profit
+```{r}
+ggplot(Obs_Subcat, aes(x=`Sub-Category`, y=Profit, fill=`Sub-Category`)) + 
+  geom_bar(stat="identity", position=position_dodge()) +
+  geom_errorbar(aes(ymin=Profit-sd(Profit), ymax=Profit+sd(Profit)), width=.1,
+                position=position_dodge(.9))+ theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+```
+
+Analysis of Technology Category
+```{r}
+Obs_TOT = aggregate(c(Dataset['Quantity'],Dataset['Sales'],Dataset['Discount'],Dataset['Profit']), by =c(Dataset[8],Dataset[9]),FUN = sum)
+Obs_Tech <- Obs_TOT %>%
+  filter(Category == "Technology") %>%
+  select(`Sub-Category`,Quantity, Sales, Profit)
+Obs_Tech$PS=Obs_Tech$Profit/Obs_Tech$Sales
+Obs_Tech$PP=round((Obs_Tech$PS/sum(Obs_Tech$PS))*100,2)
+View(Obs_Tech)
+```
+Profit percent of Technology Category
+```{r}
+labels_new<-paste(Obs_Tech$`Sub-Category`,Obs_Tech$PP)
+labels_new
+
+#concatenates the above output with the '%' symbol 
+final_labels<-paste(labels_new,'%',sep = "")
+final_labels
+pie3D(Obs_Tech$PP,labels=final_labels,explode=0.2,radius = 2.5,
+      main="Profit percent of Technology subcategory ",shade = 0.5,labelcex = 0.8)
+```
+Analysis of furniture category
+```{r}
+Obs_Fur <- Obs_TOT %>%
+  filter(Category == "Furniture") %>%
+  select(`Sub-Category`,Quantity, Sales, Profit)
+Obs_Fur$PS=Obs_Fur$Profit/Obs_Fur$Sales
+Obs_Fur$PP=round((Obs_Fur$PS/sum(Obs_Fur$PS))*100,2)
+View(Obs_Fur)
+```
+
+
+Sales percent of furniture category
+```{r}
+labels_new1<-paste(Obs_Fur$`Sub-Category`,round((Obs_Fur$Sales/sum(Obs_Fur$Sales))*100,2))
+labels_new1
+
+#concatenates the above output with the '%' symbol 
+final_label1<-paste(labels_new1,'%',sep = "")
+final_label1
+pie3D(Obs_Fur$Sales,labels=final_label1,explode=0.2,radius = 2.5,
+      main="Sales percent of Furniture subcategory ",shade = 0.5,labelcex = 0.8)
+```
+
+Error plot of furniture category
+
+```{r}
+
+ggplot(Obs_Fur, aes(x=`Sub-Category`, y=Profit, fill=`Sub-Category`)) + 
+  geom_bar(stat="identity", position=position_dodge()) +
+  geom_errorbar(aes(ymin=Profit-sd(Profit), ymax=Profit+sd(Profit)), width=.1,
+                position=position_dodge(.9))
+
+```
+
+Sales percent of office Category
+```{r}
+Obs_Off <- Obs_TOT %>%
+  filter(Category == "Office Supplies") %>%
+  select(`Sub-Category`,Quantity, Sales, Profit)
+Obs_Off$PS=Obs_Off$Profit/Obs_Off$Sales
+Obs_Off$PP=round((Obs_Off$PS/sum(Obs_Off$PS))*100,2)
+View(Obs_Off)
+
+pie = ggplot(Obs_Off, aes(x="", y=-Sales, fill=reorder(`Sub-Category`,-Sales))) + geom_bar(stat="identity",color="black")
+
+# Convert to pie (polar coordinates) and add labels
+pie = pie + coord_polar("y") + 
+  theme_void()
+
+# Remove labels and add title
+pie = pie + labs(x = NULL, y = NULL, fill = NULL, title = "Sales percent of Office category")
+
+# Tidy up the theme
+pie = pie + theme_classic() + theme(axis.line = element_blank(),
+                                    axis.text = element_blank(),
+                                    axis.ticks = element_blank(),
+                                    plot.title = element_text(hjust = 0.5, color = "#666666"))
+pie
+```
+
+Error plot of subcategories and their respective profits
+```{r}
+ggplot(Obs_Off, aes(x=`Sub-Category`, y=Profit, fill=`Sub-Category`)) + 
+  geom_bar(stat="identity", position=position_dodge()) +
+  geom_errorbar(aes(ymin=Profit-sd(Profit), ymax=Profit+sd(Profit)), width=.1,
+                position=position_dodge(.9))
+
+
+```
+Region Wise Analysis
+```{r}
+Quant_Region= aggregate(c(Dataset['Sales'],Dataset['Profit']), by =Dataset[7],FUN = sum)
+View(Quant_Region)
+Quant_Region$PS=Quant_Region$Profit/Quant_Region$Sales
+Quant_Region$PP=round((Quant_Region$PS/sum(Quant_Region$PS))*100,2)
+
+```
+Profit percent per sales taken region wise
+```{r}
+labels_new3<-paste(Quant_Region$Region,Quant_Region$PP)
+labels_new3
+
+#concatenates the above output with the '%' symbol 
+final_label3<-paste(labels_new3,'%',sep = "")
+final_label3
+pie3D(Quant_Region$PP,labels=final_label3,explode=0.2,radius = 2.5,
+      main="Profit percent per sales regionwise",shade = 0.5,labelcex = 0.8)
+
+```
+Density graph of sales in different region for respective categories
+```{r}
+ggplot(data=Dataset, aes(x=Category, fill=Region)) +
+  geom_density() +
+  facet_grid(Region~.)
+```
+
+RegionWise analysis of different Categories
+```{r}
+ggplot(data=Dataset, aes(x=Category)) +
+  geom_bar() +
+  facet_wrap(.~Dataset$Region, nrow=2)+
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+```
+Region Wise sales of Subcategory items
+```{r}
+ggplot(data=Dataset, aes(x=`Sub-Category`)) +
+  geom_bar() +
+  facet_wrap(.~Dataset$Region, nrow=2)+
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+
+```
+State Wise analysis
+```{r}
+Quant_State= aggregate(c(Dataset['Quantity'],Dataset['Sales'],Dataset['Discount'],Dataset['Profit']), by =Dataset[5],FUN = sum)
+View(Quant_State)
+```
+Sales- state wise
+```{r}
+us_states <- map_data("state")
+head(us_states)
+Quant_State$region <- tolower(Quant_State$State)
+us_states_sales <- left_join(us_states, Quant_State)
+View(us_states_sales)
+
+
+p0 <- ggplot(data = us_states_sales,
+             mapping = aes(x = long, y = lat, group = group, fill = Sales))
+
+p1 <- p0 + geom_polygon(color = "gray90", size = 0.1) +
+  coord_map(projection = "albers", lat0 = 39, lat1 = 45) 
+
+p1 + labs(title = "Sales in differnt state") + theme_map() + labs(fill = "Sales")
+
+p2 <- p1 + scale_fill_gradient(low = "white", high = "dark blue") +
+  labs(title = "Sales in different state") 
+us_sales_map =p2 + theme_map() + labs(fill = "Sales")
+tmap_mode("view")
+us_sales_map
+```
+City Wise Analysis
+```{r}
+Quant_City= aggregate(c(Dataset['Quantity'],Dataset['Sales'],Dataset['Discount'],Dataset['Profit']), by =Dataset[4],FUN = sum)
+MaxSale_City=head(arrange(Quant_City,desc(Sales)), n = 10)
+MinSale_City=head(arrange(Quant_City,Sales), n = 10)
+
+MaxProf_City=head(arrange(Quant_City,desc(Profit)), n=10)
+MinProf_City=head(arrange(Quant_City,Profit), n = 10)
+MinProf_City
+MaxProf_City
+
+```
+Finding city with maximum profit and their corresponding sales
+```{r}
+value1 <-c(MaxProf_City$Sales,MaxProf_City$Profit)
+type1 <-c(rep("Sales", 10), rep("Profit", 10))
+mydata <-data.frame(MaxProf_City$City, value1)
+p <-ggplot(mydata, aes(MaxProf_City.City, value1))
+p +geom_bar(stat = "identity", aes(fill = type1), position = "dodge")+
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+```
+Finding city with minimum profit and their corresponding sales
+```{r}
+value2 <-c(MinProf_City$Sales,MinProf_City$Profit)
+type2 <-c(rep("Sales", 10), rep("Profit", 10))
+mydata2 <-data.frame(MinProf_City$City, value2)
+p <-ggplot(mydata2, aes(MinProf_City.City, value2))
+p +geom_bar(stat = "identity", aes(fill = type2), position = "dodge")+
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+```
+
+Analysis the Sales of Some States on The Basics of High Profit, Medium and Loss
+```{r}
+myplots <- list() 
+i=1
+state_data_viewer=function(states)
+  {
+  product_data =Dataset %>%
+  group_by(State) 
+ 
+   for(state in states)
+    {
+    cp <- product_data %>%
+    filter(State == state ) %>%
+    select(Category,`Sub-Category`,Quantity, Sales, Profit)%>%group_by(Category)
+   
+     for(cat in c('Furniture', 'Office Supplies', 'Technology'))
+      {
+      
+      kp <- cp %>% filter(Category == cat) %>% select(`Sub-Category`,Profit)
+      kp2= aggregate(kp["Profit"],by= kp[2], FUN = sum)
+      b<-ggplot(kp2, aes(x=`Sub-Category`, y=Profit, fill=`Sub-Category`)) +
+      geom_bar(stat="identity")+theme_minimal()+ theme(axis.text.x = element_text(angle = 90, hjust = 1))+ ggtitle(state)+xlab(cat)
+      myplots[[i]]=b
+      i=i+1
+     
+     }
+    }  
+  multiplot(plotlist=myplots,cols = 3)
+}
+states = c('New York','California','Arizona')
+state_data_viewer(states)
+```
+
+Observations and Conclusions: 
+State wise analysis of Sales
+1. California States Has Fist Highest Number of Sales
+2. New York States Has Second Highest Number of Sales
+3. Philadelphia suffers maximum losses and New York city earns maximum profits.
+4. TEXAS offers maximum discount but the sales are less and thus ends up in losses.
+5. New York, California has the maximum sales and offers a little discount making large profits.
+6. States such as West Virginia offers no discount and ends up in losses.
+7. Most no. of buyers are from New York and California.  
+   Just focus on the states that has weak sales and provide the discount in the intial stage to uplift the sales
+
+We can see from the correlation chart that Sales and profit are moderately correlated, discount and profit are Negatively Correlated, Quantity and profit are less correlated.
+
+Ship mode is generally of below average 
+Furnishers have the least deal, expanding the deal amount would acquire more benefits. 
+Tables selling cost ought to be expanded to give benefits. 
+The clasp is the least enjoyed office item and has the base deals. 
+The cost of provisions ought to be increment for more noteworthy benefits 
+West Region made the most benefit and Central made the less Profit.
+
+We have 3 regions of concern, Bookcases, Supplies and Tables as we are confronting a misfortune on the deals of these things. On the deals of tables, we are confronting the most elevated misfortune. 
+The least deals are in the southern locale, we can offer them more markdown. 
+Deals and benefit are more in the Standard class. 
+No connection among's benefit and rebate. 
+We should restrict the deals of furniture and increment that of office supplies and innovation as it produces next to no benefit contrasted with its deals. 
+In the sub-classes, we are confronting an enormous misfortune on tables so that ought to be limited. 
+The deals and benefit in Southern and Central locale are less so we should give more motivating forces like the markdown to build deals, consequently benefit will increment.
+
+
+
+
+
+
+
+
+
