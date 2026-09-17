@@ -1,0 +1,1108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Atlas — consultant prototype</title>
+<style>
+:root{
+  --nav:#120d2e;--nav2:#0e1430;--admin:#080d1c;--studio-top:#0d1c40;--studio-bot:#1b3b66;
+  --card:#101a33;--card-2:#0b1326;--line:#22304f;--line-2:#182340;
+  --ink:#e7ecf7;--muted:#95a4c4;--dim:#647391;
+  --blue:#3f8fe0;--blue-lt:#7fc9f2;--purple:#c084fc;
+  --green:#2fbf71;--amber:#d1a03a;--red:#f2696b;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:#05080f;color:var(--ink);font:14px/1.6 -apple-system,"Helvetica Neue",Arial,system-ui,sans-serif}
+button,select,input,textarea{font:inherit}
+button{cursor:pointer}
+a{color:var(--blue-lt)}
+
+/* ── harness banner ── */
+.harness{background:#0a1224;border-bottom:1px solid var(--line-2);padding:7px 16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;font-size:11.5px;color:var(--muted)}
+.harness b{color:#fff}
+.harness .sp{margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.harness select{background:#0f1830;border:1px solid var(--line);color:var(--ink);border-radius:7px;padding:4px 9px;font-size:11.5px}
+.harness .rs{display:inline-flex;background:#0c1528;border:1px solid var(--line-2);border-radius:99px;padding:3px}
+.harness .rs button{background:none;border:0;color:var(--muted);padding:4px 12px;border-radius:99px;font-size:11px}
+.harness .rs button.on{background:var(--blue);color:#fff;font-weight:600}
+.project-picks{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:7px}
+.project-pick{display:flex;align-items:center;gap:8px;background:#0a1224;border:1px solid var(--line-2);border-radius:8px;padding:8px 10px;font-size:11.5px;color:var(--muted);cursor:pointer}
+.project-pick.on{border-color:var(--blue);color:#fff;background:#11203d}
+.project-pick input{accent-color:var(--blue)}
+.project-pick small{color:var(--dim);margin-left:auto}
+
+/* ── product chrome ── */
+.dqnav{background:var(--nav);padding:10px 18px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.dqlogo{font-weight:800;letter-spacing:.05em;font-size:13px;line-height:1.1;white-space:nowrap}
+.dqlogo small{display:block;font-size:6px;color:var(--muted);letter-spacing:.16em;font-weight:500}
+.dqtabs{display:flex;gap:2px;flex-wrap:wrap;margin:auto}
+.dqtabs span{color:#c2cfe8;padding:5px 10px;border-radius:99px;font-size:11.5px;white-space:nowrap}
+.dqtabs span.on{background:var(--blue);color:#fff;font-weight:600}
+.dqr{font-size:11px;color:var(--muted);display:flex;gap:9px;align-items:center}
+.pchip{background:#16223f;border:1px solid var(--line);border-radius:99px;padding:3px 11px;font-size:10.5px;color:#cfe0ff}
+.searchbar{background:#0d1530;border:1px solid var(--line-2);border-radius:99px;padding:7px 15px;color:var(--dim);font-size:11.5px;max-width:420px;margin:10px auto 0;display:flex;justify-content:space-between}
+.crumb{background:var(--nav2);border-top:1px solid var(--line-2);border-bottom:1px solid var(--line-2);padding:8px 18px;display:flex;align-items:center;gap:9px;font-size:11.5px;color:var(--muted)}
+.crumb .bdg{border:1px solid rgba(242,105,107,.55);color:#f6a1a2;border-radius:99px;padding:1px 8px;font-size:8.5px;font-weight:800;letter-spacing:.08em}
+.crumb b{color:#fff;font-weight:600}
+.crumb .bk{margin-left:auto}
+.crumb .lk{color:var(--blue-lt);cursor:pointer}
+
+.body{background:var(--admin);padding:20px 22px 40px;min-height:calc(100vh - 150px);position:relative}
+.body.studio{background:linear-gradient(170deg,var(--studio-top),var(--studio-bot)) , var(--admin);background-repeat:no-repeat;background-size:100% 340px}
+.inner{max-width:1180px;margin:auto;position:relative}
+.globe{position:absolute;right:0;top:-6px;width:190px;height:190px;border-radius:50%;
+  background:radial-gradient(circle at 34% 30%,rgba(216,180,254,.45),rgba(168,85,247,.24) 42%,rgba(88,28,135,.14) 70%,transparent 74%);
+  border:1px solid rgba(192,132,252,.14);pointer-events:none}
+.globe::after{content:"";position:absolute;inset:14%;border-radius:50%;border:1px solid rgba(192,132,252,.12);
+  background:repeating-linear-gradient(90deg,transparent 0 13px,rgba(216,180,254,.055) 13px 14px),
+             repeating-linear-gradient(0deg,transparent 0 13px,rgba(216,180,254,.055) 13px 14px)}
+@media(max-width:900px){.globe{display:none}}
+
+h1.pt{font-size:22px;font-weight:700;margin:0 0 6px;letter-spacing:-.015em}
+h1.pt.sm{font-size:19px}
+.plead{color:#a4b6d8;font-size:12.5px;margin:0 0 18px;max-width:520px}
+.rowtop{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap}
+
+.meta{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:11px;margin:0 0 16px;max-width:620px;align-items:center}
+.meta .k{color:var(--dim);letter-spacing:.07em;text-transform:uppercase;white-space:nowrap}
+.st{display:inline-block;padding:2px 9px;border-radius:5px;font-size:10.5px;font-weight:700}
+.st.draft{background:#1b2540;color:#9fb0d0}
+.st.amb{background:rgba(209,160,58,.16);color:#e3bf72}
+.st.live{background:rgba(47,191,113,.18);color:#6ee7a8}
+.st.retr{background:rgba(242,105,107,.16);color:#f6a1a2}
+.st.pj{background:rgba(63,143,224,.2);color:#9ecbf5}
+.st.amb{background:rgba(209,160,58,.16);color:#e3bf72}
+
+.btn{display:inline-flex;align-items:center;gap:6px;background:var(--blue);color:#fff;border:0;border-radius:8px;padding:8px 14px;font-size:12px;font-weight:600;white-space:nowrap}
+.btn.pill{border-radius:99px}
+.btn.lt{background:var(--blue-lt);color:#08203a}
+.btn.gh{background:#141f3c;border:1px solid var(--line);color:#cfe0ff;font-weight:500}
+.btn.dn{background:#151e36;color:#68789a;border:1px solid var(--line-2);cursor:not-allowed}
+.btn.ok{background:var(--green);color:#03240f}
+.btn.warn{background:rgba(209,160,58,.18);border:1px solid rgba(209,160,58,.5);color:#e3bf72;font-weight:600}
+.btn.dgr{background:rgba(242,105,107,.16);border:1px solid rgba(242,105,107,.45);color:#f6a1a2;font-weight:600}
+.btn.sm{padding:5px 11px;font-size:11px}
+.btn.w{width:100%;justify-content:center}
+.btn.txt{background:none;border:0;color:var(--muted);padding:8px 6px;font-weight:500}
+
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(248px,1fr));gap:14px;max-width:860px}
+.tile{background:rgba(14,25,50,.86);border:1px solid var(--line);border-radius:12px;padding:15px;cursor:pointer;transition:.13s}
+.tile:hover{border-color:rgba(63,143,224,.55);transform:translateY(-1px)}
+.tile.dash{border-style:dashed;opacity:.66}
+.tile .ic{width:27px;height:27px;border-radius:7px;background:#16223f;display:grid;place-items:center;font-size:12px;margin-bottom:10px}
+.tile .nm{font-weight:650;font-size:14.5px;margin-bottom:3px}
+.tile .ds{color:var(--dim);font-size:11.5px;margin-bottom:12px;min-height:32px}
+.tile .ft{display:flex;justify-content:space-between;align-items:center;font-size:10.5px;font-weight:800;letter-spacing:.05em}
+.tile .ft .ar{color:var(--muted);font-weight:400}
+.gr{color:var(--green)}.am{color:var(--amber)}.rd{color:var(--red)}
+
+.empty{border:1px dashed var(--line);border-radius:12px;padding:38px 22px;text-align:center;background:rgba(10,18,38,.55);max-width:860px}
+.empty .e1{font-size:13px;color:#93a6c8;margin-bottom:5px}
+.empty .e2{font-size:11.5px;color:var(--dim);margin-bottom:16px}
+
+.two{display:grid;grid-template-columns:230px 1fr;gap:16px;align-items:start}
+@media(max-width:860px){.two{grid-template-columns:1fr}}
+.vitem{background:#0c1528;border:1px solid var(--line-2);border-radius:9px;padding:9px 11px;font-size:11.5px;margin-bottom:8px;cursor:pointer}
+.vitem:hover{border-color:var(--line)}
+.vitem.on{border-color:var(--blue);background:#11203d}
+.vitem .vn{font-weight:700;font-size:12.5px;display:flex;justify-content:space-between;gap:7px;align-items:center}
+.vitem .vd{color:var(--dim);font-size:10px;margin-top:3px}
+
+.vpanel{background:#0a1224;border:1px solid var(--line-2);border-radius:11px;padding:15px}
+.vhead{display:flex;justify-content:space-between;align-items:center;gap:11px;flex-wrap:wrap;margin-bottom:11px}
+.note{font-size:11px;color:var(--dim);margin:0 0 11px}
+.srcwrap{border:1px solid var(--line-2);border-radius:9px;overflow:hidden;background:#060c1a}
+.srchd{padding:7px 12px;font-size:10.5px;color:var(--dim);border-bottom:1px solid var(--line-2);display:flex;justify-content:space-between;gap:10px;align-items:center;background:#0a1020}
+pre.src{margin:0;padding:11px 13px;font:10.5px/1.62 var(--mono);color:#8fa3c8;max-height:230px;overflow:auto;white-space:pre}
+.rdonly{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:10.5px;color:var(--dim);margin-top:10px;flex-wrap:wrap}
+.rdonly b{color:#fff}
+
+.lbl{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin:18px 0 8px}
+.frame{border:1px solid var(--line);border-radius:11px;overflow:hidden;background:#0b1120}
+.frhd{background:#0c1528;padding:7px 12px;font-size:10.5px;color:var(--dim);display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid var(--line-2);align-items:center;flex-wrap:wrap}
+.frhd b{color:#fff}
+iframe.pv{width:100%;border:0;display:block;background:#0f0a1f}
+iframe.pv.tall{height:640px}
+iframe.pv.mid{height:400px}
+
+.fileline{display:flex;justify-content:space-between;gap:10px;font-size:11.5px;padding:7px 0;border-bottom:1px solid var(--line-2);color:var(--muted)}
+.fileline:last-child{border-bottom:0}
+.fileline b{color:#e7ecf7;font-weight:600}
+.flist{max-height:150px;overflow:auto}
+
+/* overview page */
+.lp{background:rgba(9,17,36,.75);border:1px solid var(--line);border-radius:12px;padding:17px;max-width:660px}
+.blk{border:1px dashed var(--line);border-radius:9px;padding:11px 13px;margin-bottom:9px;font-size:12px;color:var(--muted);position:relative}
+.blk .bl{font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-bottom:4px}
+.blk.lock{border-style:solid;background:#0a1224}
+.blk h5{margin:0 0 3px;font-size:16px;color:#fff}
+.blk textarea{width:100%;background:#0d1730;border:1px solid var(--line-2);color:var(--ink);border-radius:7px;padding:9px 11px;font-size:12px;resize:vertical;min-height:70px}
+.blk textarea:focus{outline:0;border-color:var(--blue)}
+
+/* client overview render */
+.cov{max-width:720px;margin:auto}
+.cov .kick{font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--purple);margin-bottom:8px}
+.cov h2{margin:0 0 5px;font-size:23px;letter-spacing:-.015em}
+.cov .cd{color:var(--muted);font-size:13px;margin-bottom:20px}
+.cov .sec{border-top:1px solid var(--line-2);padding-top:14px;margin-top:14px}
+.cov .sl{font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--dim);margin-bottom:6px}
+.cov .sv{font-size:12.5px;color:var(--muted)}
+.cov .sv b{color:#fff}
+
+/* modal */
+.ovl{position:fixed;inset:0;background:rgba(3,6,14,.78);display:grid;place-items:center;padding:20px;z-index:50;overflow:auto}
+.modal{background:#0a1630;border:1px solid var(--line);border-radius:13px;padding:19px;width:100%;max-width:520px;box-shadow:0 24px 60px rgba(0,0,0,.75);margin:auto}
+.modal.wide{max-width:660px}
+.mh{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.mh b{font-size:16px}.mh .x{color:var(--dim);cursor:pointer;font-size:17px;line-height:1}
+.md{font-size:11.5px;color:var(--dim);margin-bottom:15px;line-height:1.6}
+.field{background:#0d1730;border:1px solid var(--line-2);border-radius:9px;padding:9px 12px;margin-bottom:11px}
+.field.req{border-color:rgba(63,143,224,.4)}
+.field .fl{font-size:9px;color:var(--dim);margin-bottom:3px;letter-spacing:.05em}
+.field input,.field textarea{width:100%;background:none;border:0;color:var(--ink);font-size:13px;padding:0}
+.field input:focus,.field textarea:focus{outline:0}
+.field textarea{resize:vertical;min-height:58px;font-size:12px}
+.field .fv{font-size:12.5px}
+.mfoot{display:flex;justify-content:flex-end;gap:10px;align-items:center;margin-top:5px}
+.paste{width:100%;background:#0a1224;border:1px solid var(--line-2);color:#8fa3c8;border-radius:9px;padding:11px 13px;font:11px/1.6 var(--mono);min-height:130px;resize:vertical}
+.paste:focus{outline:0;border-color:var(--blue)}
+.upr{display:flex;gap:8px;align-items:center;margin:11px 0;flex-wrap:wrap;font-size:11px;color:var(--muted)}
+.dropzone{border:1px dashed #35507e;border-radius:10px;padding:22px;text-align:center;background:#0a1224;color:var(--muted);margin:11px 0;transition:.15s}
+.dropzone.over{border-color:var(--blue-lt);background:#10213e}
+.dropzone b{display:block;color:#fff;margin-bottom:3px}
+.validation{border:1px solid var(--line-2);border-radius:9px;overflow:hidden;margin:10px 0;background:#0a1224}
+.validation .vh{padding:8px 11px;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);border-bottom:1px solid var(--line-2)}
+.validation .vr{padding:7px 11px;font-size:11px;color:var(--muted);display:flex;gap:8px;border-bottom:1px solid var(--line-2)}
+.validation .vr:last-child{border-bottom:0}.validation .ok{color:var(--green)}.validation .er{color:var(--red)}.validation .wa{color:var(--amber)}
+.conseq{background:#0a1224;border:1px solid var(--line-2);border-radius:9px;padding:12px 13px;margin-bottom:12px}
+.conseq div{display:flex;justify-content:space-between;gap:12px;font-size:11.5px;padding:6px 0;border-bottom:1px solid var(--line-2)}
+.conseq div:last-child{border-bottom:0}
+.conseq .y{color:#6ee7a8}.conseq .a{color:#e3bf72}.conseq .w{color:#fff}
+
+.seg{display:inline-flex;background:#0c1528;border:1px solid var(--line-2);border-radius:99px;padding:3px}
+.seg button{background:none;border:0;color:var(--muted);padding:5px 14px;border-radius:99px;font-size:11.5px;white-space:nowrap}
+.seg button.on{background:var(--blue);color:#fff;font-weight:600}
+.pipe{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:0 0 16px}
+.pipe .n2{padding:5px 12px;border-radius:7px;border:1px solid var(--line-2);background:#0c1528;font-size:11.5px;color:var(--muted);white-space:nowrap}
+.pipe .n2.on{border-color:var(--blue);background:#11203d;color:#fff;font-weight:600}
+.pipe .n2.done{border-color:rgba(47,191,113,.4)}
+.pipe .n2.term{border-color:rgba(242,105,107,.4);color:#f6a1a2}
+.pipe .ar{color:var(--dim)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:24px;background:#10233f;border:1px solid rgba(63,143,224,.5);color:#fff;padding:11px 18px;border-radius:99px;font-size:12.5px;z-index:99;box-shadow:0 12px 30px rgba(0,0,0,.6)}
+.hintbar{background:rgba(63,143,224,.09);border:1px solid rgba(63,143,224,.28);border-radius:10px;padding:10px 13px;font-size:11.5px;color:var(--muted);margin-bottom:16px}
+.hintbar b{color:#fff}
+.wd{max-width:520px;margin:60px auto;text-align:center}
+.wd .wi{font-size:30px;margin-bottom:12px}
+.story{max-width:1050px;margin:auto}.story h2{margin:0 0 7px;font-size:20px}.story h3{font-size:13px;margin:22px 0 8px;color:#fff}
+.story-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:800px){.story-grid{grid-template-columns:1fr}}
+.story-card{background:var(--card-2);border:1px solid var(--line);border-radius:11px;padding:14px}.story-card h4{margin:0 0 7px;font-size:12px;letter-spacing:.07em;text-transform:uppercase;color:var(--dim)}
+.story-card p,.story-card li{color:var(--muted);font-size:12px}.story-card ul,.story-card ol{margin:6px 0 0;padding-left:18px}.story-card li{margin:5px 0}.story-card b{color:#fff}
+</style>
+</head>
+<body>
+
+<div class="harness">
+  <span><b>Working prototype</b> — upload a real standalone HTML file and it renders for real.</span>
+  <span class="sp">
+    <span>Project</span>
+    <select id="projSel"></select>
+    <span class="rs" id="roleSw">
+      <button data-role="consultant">Blue Ops consultant</button>
+      <button data-role="client">Client consumer</button>
+    </span>
+    <button class="btn gh sm" data-act="workflow">Workflow &amp; user story</button>
+    <button class="btn gh sm" data-act="reset">Reset demo</button>
+  </span>
+</div>
+
+<div id="chrome"></div>
+<div id="app"></div>
+<div id="modalHost"></div>
+
+<input type="file" id="fiHtml" accept=".html,.htm" hidden>
+
+<script type="text/template" id="seedHvac">
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>HVAC Cross-Sell &amp; Wallet Share Analysis</title>
+<style>
+:root{--bg:#0f0a1f;--panel:#150f2c;--panel-2:#1a1338;--line:#2a1d4a;--text:#ece7f7;--muted:#a394c4;--accent:#c084fc;--accent-soft:rgba(192,132,252,.1);--green:#6ee7a8;--amber:#e3bf72;--red:#f2969b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.6 "Segoe UI",system-ui,-apple-system,sans-serif}
+.wrap{max-width:1100px;margin:0 auto;padding:30px 24px 60px}
+header.deliverable{border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:26px}
+.eyebrow{color:var(--accent);font-size:10px;letter-spacing:.24em;text-transform:uppercase;font-weight:600}
+h1{margin:8px 0 6px;font-size:27px;font-weight:650;letter-spacing:-.02em}
+.sub{color:var(--muted);margin:0}
+.meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.chip{background:var(--panel-2);border:1px solid var(--line);color:var(--muted);border-radius:999px;padding:4px 11px;font-size:11px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:26px}
+@media(max-width:780px){.kpis{grid-template-columns:repeat(2,1fr)}}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px}
+.kpi .label{color:var(--muted);font-size:12px}
+.kpi .value{font-size:26px;font-weight:650;margin-top:6px;letter-spacing:-.02em}
+.kpi .delta{font-size:12px;margin-top:4px;color:var(--muted)}
+.kpi .up{color:var(--green)}.kpi .warn{color:var(--amber)}.kpi .down{color:var(--red)}
+nav.tabs{display:flex;gap:6px;border-bottom:1px solid var(--line);margin-bottom:22px;flex-wrap:wrap}
+.tab{background:none;border:none;color:var(--muted);font:inherit;cursor:pointer;padding:10px 15px;border-bottom:2px solid transparent;border-radius:6px 6px 0 0}
+.tab:hover{color:var(--text);background:var(--panel)}
+.tab[aria-selected="true"]{color:var(--text);border-bottom-color:var(--accent);background:var(--accent-soft)}
+section.panel{display:none}section.panel.active{display:block}
+.headline{border-left:3px solid var(--accent);background:var(--panel-2);padding:14px 16px;border-radius:0 8px 8px 0;margin-bottom:22px}
+h2{font-size:15px;margin:26px 0 12px;letter-spacing:.02em}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
+th{color:var(--muted);font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:600}
+td.num{text-align:right;font-variant-numeric:tabular-nums}
+.bar{height:7px;border-radius:99px;background:var(--panel-2);overflow:hidden;min-width:90px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),#7dd3fc)}
+ul{margin:8px 0 0;padding-left:20px;color:var(--muted)}li{margin:6px 0}
+.foot{margin-top:34px;border-top:1px solid var(--line);padding-top:14px;color:var(--muted);font-size:11.5px}
+</style></head>
+<body><div class="wrap">
+<header class="deliverable">
+  <div class="eyebrow">Atlas deliverable &middot; generated via Atlas Studio</div>
+  <h1>HVAC Cross-Sell &amp; Wallet Share Analysis</h1>
+  <p class="sub">Pinnacle Corp &middot; Trailing 12 months to 30 Jun 2026</p>
+  <div class="meta">
+    <span class="chip">Source: Lakehouse / Pinnacle Corp / Financial Reporting</span>
+    <span class="chip">Template: Generic Charts</span>
+    <span class="chip">Rows analysed: 48,912</span>
+    <span class="chip">Illustrative sample data</span>
+  </div>
+</header>
+<div class="kpis">
+  <div class="kpi"><div class="label">Revenue (TTM)</div><div class="value">$42.6M</div><div class="delta up">+8.4% vs prior year</div></div>
+  <div class="kpi"><div class="label">Avg products per customer</div><div class="value">2.4</div><div class="delta">of 6 available lines</div></div>
+  <div class="kpi"><div class="label">Estimated wallet share</div><div class="value">38%</div><div class="delta warn">peer benchmark 55%</div></div>
+  <div class="kpi"><div class="label">Cross-sell opportunity</div><div class="value">$6.1M</div><div class="delta">across 10 named accounts</div></div>
+</div>
+<nav class="tabs">
+  <button class="tab" aria-selected="true" data-p="p1">Opportunity overview</button>
+  <button class="tab" data-p="p2">Cross-sell matrix</button>
+  <button class="tab" data-p="p3">Account detail</button>
+  <button class="tab" data-p="p4">Recommended actions</button>
+</nav>
+<section class="panel active" id="p1">
+  <div class="headline"><b>Headline:</b> Pinnacle sells an average of 2.4 of 6 product lines per customer. Closing the gap on preventative maintenance contracts and controls / BMS alone represents <b>$4.2M</b> of the total $6.1M opportunity, concentrated in 10 existing accounts.</div>
+  <h2>Opportunity by product line</h2>
+  <table><thead><tr><th>Product line</th><th>Attach rate</th><th>Peer benchmark</th><th class="num">Opportunity</th></tr></thead><tbody>
+    <tr><td>Preventative maintenance contracts</td><td><div class="bar"><i style="width:31%"></i></div></td><td>68%</td><td class="num">$2.4M</td></tr>
+    <tr><td>Controls / BMS</td><td><div class="bar"><i style="width:22%"></i></div></td><td>54%</td><td class="num">$1.8M</td></tr>
+    <tr><td>Extended warranty</td><td><div class="bar"><i style="width:18%"></i></div></td><td>40%</td><td class="num">$0.9M</td></tr>
+    <tr><td>Indoor air quality</td><td><div class="bar"><i style="width:12%"></i></div></td><td>29%</td><td class="num">$0.7M</td></tr>
+    <tr><td>Refrigeration service</td><td><div class="bar"><i style="width:9%"></i></div></td><td>21%</td><td class="num">$0.3M</td></tr>
+  </tbody></table>
+</section>
+<section class="panel" id="p2">
+  <h2>Which lines sell together</h2>
+  <table><thead><tr><th>Anchor purchase</th><th>Most common second line</th><th class="num">Together</th><th class="num">Uplift</th></tr></thead><tbody>
+    <tr><td>Equipment replacement</td><td>Preventative maintenance</td><td class="num">41%</td><td class="num">+$1,900 / job</td></tr>
+    <tr><td>Equipment replacement</td><td>Extended warranty</td><td class="num">18%</td><td class="num">+$640 / job</td></tr>
+    <tr><td>Preventative maintenance</td><td>Controls / BMS</td><td class="num">14%</td><td class="num">+$7,400 / site</td></tr>
+    <tr><td>Controls / BMS</td><td>Indoor air quality</td><td class="num">11%</td><td class="num">+$2,100 / site</td></tr>
+  </tbody></table>
+  <ul><li>Maintenance attached at the point of equipment sale is <b>2.3x</b> more likely to renew.</li><li>Controls sold standalone churn at more than double the rate of controls sold behind a maintenance contract.</li></ul>
+</section>
+<section class="panel" id="p3">
+  <h2>Ten accounts carrying the opportunity</h2>
+  <table><thead><tr><th>Account</th><th>Sector</th><th class="num">TTM revenue</th><th class="num">Lines</th><th class="num">Opportunity</th></tr></thead><tbody>
+    <tr><td>Meridian Health System</td><td>Healthcare</td><td class="num">$4.1M</td><td class="num">2 of 6</td><td class="num">$1.1M</td></tr>
+    <tr><td>Harbour Point Retail</td><td>Retail</td><td class="num">$2.8M</td><td class="num">1 of 6</td><td class="num">$0.9M</td></tr>
+    <tr><td>Kestrel Logistics</td><td>Industrial</td><td class="num">$2.2M</td><td class="num">3 of 6</td><td class="num">$0.7M</td></tr>
+    <tr><td>Northgate Schools</td><td>Education</td><td class="num">$1.9M</td><td class="num">2 of 6</td><td class="num">$0.6M</td></tr>
+    <tr><td>Cedar Ridge Hospitality</td><td>Hospitality</td><td class="num">$1.6M</td><td class="num">2 of 6</td><td class="num">$0.5M</td></tr>
+    <tr><td>Other five accounts</td><td>Mixed</td><td class="num">$5.3M</td><td class="num">avg 2.1</td><td class="num">$2.3M</td></tr>
+  </tbody></table>
+</section>
+<section class="panel" id="p4">
+  <h2>Where to start</h2>
+  <ul>
+    <li><b>Attach maintenance at the point of sale.</b> Attach rate 31% against a 68% benchmark; the single largest line at $2.4M.</li>
+    <li><b>Lead controls with the five largest healthcare and education sites.</b> Longest contracts, lowest churn.</li>
+    <li><b>Make extended warranty an opt-out, not an opt-in.</b> Lowest effort of the three plays.</li>
+    <li><b>Re-price the standalone controls book</b> where no maintenance contract sits behind it.</li>
+  </ul>
+  <h2>Data limitations</h2>
+  <ul><li>No general ledger was supplied, so revenue is per the job-level extract and is not tied out.</li><li>Peer benchmarks are drawn from the sector reference set, not from Pinnacle's own market.</li></ul>
+</section>
+<p class="foot">Prepared by BlueOps Partners. Illustrative sample data for demonstration. Figures are not tied out to audited financial statements.</p>
+</div>
+<script>
+document.querySelectorAll('.tab').forEach(function(t){
+  t.addEventListener('click',function(){
+    document.querySelectorAll('.tab').forEach(function(x){x.setAttribute('aria-selected',x===t)});
+    document.querySelectorAll('section.panel').forEach(function(p){p.classList.toggle('active',p.id===t.dataset.p)});
+  });
+});
+<\/script>
+</body></html>
+</script>
+
+<script>
+/* ═══════════════ state ═══════════════ */
+const PROJECTS = ['newDiligentIQ','Atlas QA','Project MoneyCo','Project Gold'];
+const LS = 'atlas-consultant-proto-v3';
+let S, view = {name:'shelf'}, pending = null, toastT = null;
+
+function seed(){
+  const html = document.getElementById('seedHvac').textContent.trim();
+  return {
+    project: 'newDiligentIQ',
+    role: 'consultant',
+    analyses: [{
+      id: 'a1',
+      name: 'HVAC Cross-Sell & Wallet Share',
+      desc: 'Where Pinnacle is leaving money on the table across six product lines.',
+      project: 'newDiligentIQ',
+      projects: ['newDiligentIQ'],
+      status: 'draft',
+      versions: [{ id:'v1', n:1, files:[{path:'index.html', size:html.length}], html, createdAt: Date.now(), validation: validateHtml(html, html.length) }],
+      liveVersionId: null,
+      selectedVersionId: 'v1',
+      overview: {
+        basis: 'Trailing twelve months to 30 June 2026. Pinnacle Corp only; the Nevada JV is out of scope. 48,912 rows from Lakehouse financial reporting. No general ledger was supplied, so figures are not tied out.',
+        startHere: 'Start on the opportunity overview, then the ten named accounts under account detail.'
+      },
+      totalUsers: 10, openedBy: 0, note:'', retractReason:''
+    },{
+      id: 'a2',
+      name: 'Test data',
+      desc: 'A second analysis on this project, still in draft.',
+      project: 'newDiligentIQ',
+      projects: ['newDiligentIQ'],
+      status: 'draft',
+      versions: [],
+      liveVersionId: null,
+      selectedVersionId: null,
+      overview: { basis:'', startHere:'' },
+      totalUsers: 10, openedBy: 0, note:'', retractReason:''
+    }]
+  };
+}
+function load(){
+  try{
+    const r = localStorage.getItem(LS);
+    if(r){
+      S = JSON.parse(r);
+      S.analyses.forEach(a=>{
+        a.projects = a.projects || [a.project || S.project];
+        a.project = a.projects[0];
+        a.versions.forEach(v=>v.validation = v.validation || validateHtml(v.html, v.html.length));
+      });
+      return;
+    }
+  }catch(e){}
+  S = seed();
+}
+function save(){ try{ localStorage.setItem(LS, JSON.stringify(S)); }catch(e){ toast('Too large to save locally — the session still works'); } }
+function cur(){ return S.analyses.find(a=>a.id===view.id); }
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function fmtBytes(b){ return b<1024 ? b+' B' : b<1048576 ? (b/1024).toFixed(0)+' KB' : (b/1048576).toFixed(1)+' MB'; }
+function fmtDate(t){ const d=new Date(t); return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}); }
+function validateHtml(html, size){
+  const checks = [];
+  const critical = (label, detail)=>checks.push({level:'error',label,detail});
+  const warn = (label, detail)=>checks.push({level:'warning',label,detail});
+  const ok = (label, detail)=>checks.push({level:'ok',label,detail});
+  if(!html || !html.trim()) critical('Empty file','The HTML document contains no content.');
+  else if(!/<html[\s>]/i.test(html) || !/<\/html>/i.test(html)) critical('Document structure','A complete <html>…</html> document is required.');
+  else ok('Document structure','Complete HTML document found.');
+  if(size > 5*1024*1024) critical('File size','The standalone HTML exceeds the 5 MB V1 limit.');
+  else ok('File size',fmtBytes(size)+' of 5 MB.');
+  if(/\b(?:href|src)\s*=\s*["']\s*javascript:/i.test(html)) critical('Unsafe navigation','javascript: URLs are not allowed.');
+  else ok('Unsafe navigation','No javascript: links found.');
+  const external = (html.match(/\b(?:src|href)\s*=\s*["']https?:\/\//gi)||[]).length;
+  if(external) warn('External dependencies',external+' remote resource'+(external===1?'':'s')+' may fail in a client environment.');
+  else ok('External dependencies','The document is self-contained.');
+  const scripts = (html.match(/<script\b/gi)||[]).length;
+  if(scripts) warn('Active scripts',scripts+' script block'+(scripts===1?'':'s')+' will run inside a sandbox.');
+  else ok('Active scripts','No script blocks found.');
+  const forms = (html.match(/<form\b/gi)||[]).length;
+  if(forms) warn('Form submission',forms+' form'+(forms===1?'':'s')+' detected; submissions are blocked in preview.');
+  return {ready:!checks.some(c=>c.level==='error'),checks};
+}
+function validationMarkup(v){
+  const val = v.validation || validateHtml(v.html,v.html.length);
+  return '<div class="validation"><div class="vh">'+(val.ready?'Ready to preview and publish':'Publish blocked')+'</div>'
+    + val.checks.map(c=>'<div class="vr"><span class="'+(c.level==='error'?'er':c.level==='warning'?'wa':'ok')+'">'+(c.level==='error'?'✕':c.level==='warning'?'!':'✓')+'</span>'
+      + '<span><b style="color:#fff">'+esc(c.label)+'</b> — '+esc(c.detail)+'</span></div>').join('')+'</div>';
+}
+function toast(msg){
+  clearTimeout(toastT);
+  let el = document.querySelector('.toast');
+  if(!el){ el = document.createElement('div'); el.className='toast'; document.body.appendChild(el); }
+  el.textContent = msg;
+  toastT = setTimeout(()=>el.remove(), 2600);
+}
+
+/* ═══════════════ file handling ═══════════════ */
+function readAsText(f){ return new Promise(r=>{ const fr=new FileReader(); fr.onload=()=>r(fr.result); fr.readAsText(f); }); }
+function readAsDataURL(f){ return new Promise(r=>{ const fr=new FileReader(); fr.onload=()=>r(fr.result); fr.readAsDataURL(f); }); }
+
+async function ingest(fileList){
+  const files = [...fileList];
+  if(!files.length) return null;
+  if(files.length!==1){ toast('V1 accepts one standalone HTML file per version'); return null; }
+  const f = files[0];
+  if(!/\.html?$/i.test(f.name)){ toast('Choose an .html file'); return null; }
+  const html = await readAsText(f);
+  return {
+    files:[{path:f.name,size:f.size}],
+    html,
+    validation:validateHtml(html,f.size)
+  };
+}
+
+function lookup(files, base, ref){
+  const clean = ref.split('?')[0].split('#')[0].replace(/^\.\//,'');
+  const cands = [base + clean, clean, clean.replace(/^\//,'')];
+  for(const c of cands){
+    const hit = files.find(f=>f.path === c || f.path.endsWith('/'+c));
+    if(hit) return hit;
+  }
+  return null;
+}
+
+/* inline local css / js / images so a folder upload renders standalone */
+function assemble(files, idx){
+  let html = idx.data;
+  const base = idx.path.includes('/') ? idx.path.slice(0, idx.path.lastIndexOf('/')+1) : '';
+  html = html.replace(/<link\b[^>]*>/gi, m=>{
+    if(!/stylesheet/i.test(m)) return m;
+    const h = (m.match(/href=["']([^"']+)["']/i)||[])[1];
+    if(!h) return m;
+    const f = lookup(files, base, h);
+    return (f && f.isText) ? '<style>\n'+f.data+'\n</style>' : m;
+  });
+  html = html.replace(/<script\b[^>]*src=["']([^"']+)["'][^>]*>\s*<\/script>/gi, (m, src)=>{
+    const f = lookup(files, base, src);
+    return (f && f.isText) ? '<script>\n'+f.data+'\n<\/script>' : m;
+  });
+  html = html.replace(/\b(src|href)=["']([^"']+)["']/gi, (m, attr, val)=>{
+    if(/^(https?:|data:|blob:|#|mailto:|tel:|\/\/)/i.test(val)) return m;
+    const f = lookup(files, base, val);
+    if(!f || f.isText) return m;
+    return attr+'="'+f.data+'"';
+  });
+  return html;
+}
+
+/* ═══════════════ chrome ═══════════════ */
+function renderChrome(){
+  const client = S.role==='client';
+  const tabs = ['My DiligentIQ','Dashboards','Tasks','Requests','Lakehouse','Marketplace'];
+  let crumb = '';
+  if(view.name==='workflow'){
+    crumb = '<div class="crumb"><span class="lk" data-act="go-shelf">Atlas Studio</span><span>›</span><b>Workflow & user story</b>'
+      + '<span class="bk lk" data-act="go-shelf">← Back to Atlas Studio</span></div>';
+  } else if(view.name!=='shelf' && !client){
+    const a = cur();
+    const tail = view.name==='detail' ? 'Versions' : view.name==='overview' ? 'Overview page' : view.name==='client' ? 'Client view' : 'Preview';
+    crumb = '<div class="crumb"><span class="lk" data-act="go-shelf">DiligentIQ</span><span>›</span>'
+      + '<b>'+esc(a?a.name:'')+'</b><span>›</span><span>'+tail+'</span>'
+      + '<span class="bk lk" data-act="go-shelf">← Back to Analysis</span></div>';
+  }
+  if(client && view.name!=='shelf'){
+    crumb = '<div class="crumb"><span class="lk" data-act="go-shelf">Analysis</span><span>›</span><b>'+esc(cur()?cur().name:'')+'</b>'
+      + '<span class="bk lk" data-act="go-shelf">← Back to Analysis</span></div>';
+  }
+  document.getElementById('chrome').innerHTML =
+    '<div class="dqnav">'
+    + '<div class="dqlogo">DILIGENTIQ<small>POWERED BY ONTARIO</small></div>'
+    + '<div class="dqtabs">' + tabs.map(t=>'<span>'+t+'</span>').join('')
+    + '<span class="on">Atlas Studio</span><span>⚗ Smith</span></div>'
+    + '<div class="dqr"><span class="pchip">Project · '+esc(S.project)+'</span><span>◍</span><span>🔔</span></div>'
+    + '</div>'
+    + '<div style="background:var(--nav);padding:0 18px 10px"><div class="searchbar"><span>Search DiligentIQ…</span><span>⌕</span></div></div>'
+    + crumb;
+}
+
+/* ═══════════════ views ═══════════════ */
+function statusChip(a){
+  if(a.status==='published') return '<span class="st live">Published · v'+vNum(a,a.liveVersionId)+'</span>';
+  if(a.status==='retracted') return '<span class="st retr">Retracted</span>';
+  if(!a.versions.length) return '<span class="st amb">Empty draft — no HTML uploaded</span>';
+  return '<span class="st draft">Draft — not visible to the client</span>';
+}
+function canDiscard(a){ return a.status==='draft' && !a.versions.length; }
+function vNum(a,id){ const v=a.versions.find(x=>x.id===id); return v?v.n:'–'; }
+
+function renderShelf(){
+  const client = S.role==='client';
+  const list = S.analyses.filter(a=>(a.projects||[a.project]).includes(S.project) && (!client || a.status==='published'));
+  let tiles = '';
+  if(list.length){
+    tiles = '<div class="tiles">' + list.map(a=>{
+      let ft;
+      if(a.status==='published') ft = '<span class="gr">'+(client?'READY':'PUBLISHED · v'+vNum(a,a.liveVersionId))+'</span>';
+      else if(a.status==='retracted') ft = '<span class="rd">RETRACTED</span>';
+      else if(!a.versions.length) ft = '<span class="am">DRAFT · NO HTML YET</span>';
+      else ft = '<span class="am">DRAFT · v'+a.versions[a.versions.length-1].n+' NOT VISIBLE</span>';
+      return '<div class="tile'+(a.status==='retracted'||!a.versions.length?' dash':'')+'" data-act="open" data-id="'+a.id+'">'
+        + '<div class="ic">'+(a.versions.length?'📊':'＋')+'</div><div class="nm">'+esc(a.name)+'</div>'
+        + '<div class="ds">'+esc(a.desc||'No description.')+'</div>'
+        + '<div style="font-size:9.5px;color:var(--dim);margin-bottom:8px">'+(a.projects||[a.project]).map(p=>esc(p)).join(' · ')+'</div>'
+        + '<div class="ft">'+ft+'<span class="ar">Open →</span></div></div>';
+    }).join('') + '</div>';
+  } else {
+    tiles = '<div class="empty"><div class="e1">'+(client?'No analyses have been published to this project yet.':'No analyses on this project yet.')+'</div>'
+      + '<div class="e2">'+(client?'Your Blue Ops team will publish here when a deliverable is ready.':'Add one, load the HTML package, then publish it.')+'</div>'
+      + (client?'':'<button class="btn pill" data-act="new-analysis">+ Add the first analysis</button>')+'</div>';
+  }
+  const hint = client
+    ? '<div class="hintbar"><b>You are the client.</b> Only published analyses appear, with no controls. Switch back to the consultant above to publish or retract.</div>'
+    : '<div class="hintbar"><b>Try it:</b> open the analysis, add a version by dragging or selecting a real standalone .html file, preview it as the client, then publish. Everything renders for real.</div>';
+  document.getElementById('app').innerHTML =
+    '<div class="body studio"><div class="inner"><div class="globe"></div>'
+    + hint
+    + '<div class="rowtop"><div><h1 class="pt">Atlas Studio</h1>'
+    + '<p class="plead">'+(client?'Finished analyses your Blue Ops team has delivered on this engagement.':'Create, preview and publish finished HTML analyses for this project.')+'</p></div>'
+    + (client?'':'<button class="btn pill" data-act="new-analysis">+ Add analysis</button>')
+    + '</div>' + tiles + '</div></div>';
+}
+
+function renderDetail(){
+  const a = cur(); if(!a){ view={name:'shelf'}; return render(); }
+  if(!a.versions.length){
+    document.getElementById('app').innerHTML =
+      '<div class="body"><div class="inner"><div class="rowtop"><div><h1 class="pt sm">'+esc(a.name)+'</h1>'
+      + '<p class="plead">'+esc(a.desc)+'</p></div><button class="btn gh sm" data-act="edit-metadata">Edit details</button></div>'
+      + '<div class="meta"><span class="k">Status</span><span><span class="st draft">Draft — no version yet</span></span>'
+      + '<span class="k">Projects</span><span>'+(a.projects||[a.project]).map(p=>'<span class="st pj">'+esc(p)+'</span>').join(' ')+'</span></div>'
+      + '<div class="empty"><div class="e1">Load the first version</div><div class="e2">Drag or select one standalone HTML file. Atlas validates it before preview or publish.</div>'
+      + '<div style="display:flex;gap:9px;justify-content:center;flex-wrap:wrap">'
+      + '<button class="btn" data-act="new-version">Upload HTML</button>'
+      + (canDiscard(a)?'<button class="btn dgr" data-act="discard">Discard draft</button>':'')
+      + '</div></div></div></div>';
+    return;
+  }
+  const sel = a.versions.find(v=>v.id===a.selectedVersionId) || a.versions[a.versions.length-1];
+  const isLive = sel && sel.id===a.liveVersionId && a.status==='published';
+  const pipe = '<div class="pipe">'
+    + '<span class="n2'+(a.status==='draft'?' on':' done')+'">Draft</span><span class="ar">→</span>'
+    + '<span class="n2'+(a.status==='published'?' on':'')+'">Published</span><span class="ar">→</span>'
+    + '<span class="n2'+(a.status==='retracted'?' on term':' term')+'">Retracted</span></div>';
+
+  let rail = '<button class="btn w" data-act="new-version">+ Add new version</button><div style="height:10px"></div>';
+  rail += a.versions.slice().reverse().map(v=>{
+    const chip = (v.id===a.liveVersionId && a.status==='published') ? '<span class="st live">Live</span>'
+      : (v.id===a.liveVersionId && a.status==='retracted') ? '<span class="st retr">Pulled</span>'
+      : '<span class="st draft">Draft</span>';
+    return '<div class="vitem'+(v.id===sel.id?' on':'')+'" data-act="pick-version" data-vid="'+v.id+'">'
+      + '<div class="vn">v'+v.n+' '+chip+'</div>'
+      + '<div class="vd">'+fmtDate(v.createdAt)+' · '+v.files.length+' file'+(v.files.length===1?'':'s')+'</div></div>';
+  }).join('');
+
+  let actions = '<div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">';
+  if(a.status!=='published'){
+    actions += '<button class="btn '+(sel.validation&&sel.validation.ready?'ok':'dn')+' sm w" data-act="'+(sel.validation&&sel.validation.ready?'publish':'validation-blocked')+'">Publish v'+sel.n+' to '+(a.projects||[a.project]).length+' project'+((a.projects||[a.project]).length===1?'':'s')+'</button>';
+  } else if(!isLive){
+    actions += '<button class="btn ok sm w" data-act="replace">Replace live with v'+sel.n+'</button>';
+  }
+  if(a.status==='published') actions += '<button class="btn warn sm w" data-act="retract">Retract from client</button>';
+  if(a.status==='retracted') actions += '<button class="btn ok sm w" data-act="publish">Re-publish v'+sel.n+'</button>';
+  actions += '<button class="btn gh sm w" data-act="go-overview">Edit overview page</button>';
+  actions += '<button class="btn gh sm w" data-act="go-preview">Preview as client</button>';
+  actions += '<button class="btn gh sm w" data-act="edit-metadata">Edit name & description</button>';
+  actions += '</div><p style="font-size:9.5px;color:var(--dim);margin:10px 0 0;line-height:1.55">Tab visibility stays with Ontario. The tab turns on by itself at first publish.</p>';
+
+  const src = esc(sel.html.length>4000 ? sel.html.slice(0,4000)+'\n\n… '+(sel.html.length-4000)+' more characters' : sel.html);
+  const flist = sel.files.map(f=>'<div class="fileline"><b>'+esc(f.path)+'</b><span>'+fmtBytes(f.size)+'</span></div>').join('');
+
+  document.getElementById('app').innerHTML =
+    '<div class="body"><div class="inner">'
+    + '<h1 class="pt sm">'+esc(a.name)+'</h1>'
+    + '<div class="meta"><span class="k">Status</span><span>'+statusChip(a)
+      + (a.status==='published'?' <span style="font-size:10px;color:var(--dim)">· '+a.totalUsers+' client users on this project</span>':'')
+      + (a.status==='retracted'&&a.retractReason?' <span style="font-size:10px;color:var(--dim)">· '+esc(a.retractReason)+'</span>':'')
+      + '</span>'
+    + '<span class="k">Projects</span><span>'+(a.projects||[a.project]).map(p=>'<span class="st pj">'+esc(p)+'</span>').join(' ')+' <span style="font-size:10px;color:var(--dim)">· locked after first version</span></span></div>'
+    + pipe
+    + '<div class="two"><div>'+rail+actions+'</div>'
+    + '<div><div class="vpanel">'
+    + '<div class="vhead"><div><b style="font-size:14px">v'+sel.n+'</b> '
+      + '<span style="font-size:10.5px;color:var(--dim)">'+sel.files.length+' file'+(sel.files.length===1?'':'s')+' · created '+fmtDate(sel.createdAt)+'</span></div></div>'
+    + '<p class="note">This version is a standalone HTML document — it is served to clients exactly as written.</p>'
+    + '<div class="srcwrap"><div class="srchd"><span>'+esc(sel.files[0].path)+'</span><span>read-only</span></div>'
+    + '<pre class="src">'+src+'</pre></div>'
+    + '<div class="rdonly"><span>🔒 Read-only once created — Reid\'s package is served byte for byte.</span>'
+    + '<span>Need a change? <b>Upload v'+(a.versions.length+1)+'</b></span></div>'
+    + validationMarkup(sel)
+    + (sel.files.length>1 ? '<div class="lbl">Files in this version</div><div class="flist">'+flist+'</div>' : '')
+    + '<div class="lbl">Live preview</div>'
+    + '<div class="frame"><div class="frhd"><span>Rendering <b>v'+sel.n+'</b> exactly as served</span><span>'+fmtBytes(sel.html.length)+'</span></div>'
+    + '<iframe class="pv tall" sandbox="allow-scripts" srcdoc="'+esc(sel.html)+'"></iframe></div>'
+    + '</div></div></div></div></div>';
+}
+
+function renderOverview(){
+  const a = cur();
+  const versions = a.versions.slice().reverse().map(v=>
+    'v'+v.n+' — '+fmtDate(v.createdAt)+(v.id===a.liveVersionId&&a.status==='published'?' · current':' · superseded')).join('<br>');
+  document.getElementById('app').innerHTML =
+    '<div class="body"><div class="inner">'
+    + '<div class="rowtop" style="margin-bottom:6px"><h1 class="pt sm">Overview page</h1>'
+    + '<div style="display:flex;gap:8px"><button class="btn gh sm" data-act="go-preview">Preview as client</button>'
+    + '<button class="btn sm" data-act="save-overview">Save</button></div></div>'
+    + '<p class="plead">What the client reads before they open the analysis. The skeleton is standard; only the two marked blocks change.</p>'
+    + '<div class="lp">'
+    + '<div class="blk lock"><div class="bl">From the name and description · locked</div>'
+    + '<h5>'+esc(a.name)+'</h5><div>'+esc(a.desc)+'</div></div>'
+    + '<div class="blk lock"><div class="bl">Versions delivered · generated, not typed</div><div>'+(versions||'None yet')+'</div></div>'
+    + '<div class="blk"><div class="bl">Basis of presentation · editable</div>'
+    + '<textarea id="ovBasis" placeholder="Periods covered, entities in and out of scope, anything that could not be tied out…">'+esc(a.overview.basis)+'</textarea></div>'
+    + '<div class="blk"><div class="bl">What to look at first · editable, optional</div>'
+    + '<textarea id="ovStart" style="min-height:52px" placeholder="Point them at the tab that matters most…">'+esc(a.overview.startHere)+'</textarea></div>'
+    + '<div class="blk lock"><div class="bl">The analysis · Reid\'s package</div>'
+    + '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px">'
+    + '<span>v'+(a.versions.length?a.versions[a.versions.length-1].n:'–')+' · contents live inside the HTML</span>'
+    + '<button class="btn lt sm" data-act="go-preview">Open analysis →</button></div></div>'
+    + '</div>'
+    + '<p style="font-size:11px;color:var(--dim);margin-top:14px;max-width:620px">No contents list here by design — a standard input list advertises a gap. The table of contents stays inside the HTML.</p>'
+    + '</div></div>';
+}
+
+function renderPreview(){
+  const a = cur();
+  const sel = a.versions.find(v=>v.id===a.selectedVersionId) || a.versions[a.versions.length-1];
+  const pane = view.pane || 'overview';
+  const asWho = view.as || 'client';
+  let content;
+  if(pane==='overview'){
+    content = '<div class="frame"><div class="frhd"><span>Overview page as a <b>'
+      + (asWho==='client'?'client consumer on '+esc(S.project):'Blue Ops user')+'</b> receives it</span><span>1440 × 900</span></div>'
+      + '<div style="padding:30px 26px;background:#0b1120"><div class="cov">'
+      + '<div class="kick">Analysis · '+esc(S.project)+'</div>'
+      + '<h2>'+esc(a.name)+'</h2><div class="cd">'+esc(a.desc)+'</div>'
+      + (a.overview.startHere?'<div class="sec"><div class="sl">What to look at first</div><div class="sv">'+esc(a.overview.startHere)+'</div></div>':'')
+      + '<div class="sec"><div class="sl">Basis of presentation</div><div class="sv">'+esc(a.overview.basis||'—')+'</div></div>'
+      + '<div class="sec"><div class="sl">Versions delivered</div><div class="sv">'
+      + a.versions.slice().reverse().map(v=>'<b>v'+v.n+'</b> — '+fmtDate(v.createdAt)).join('<br>')+'</div></div>'
+      + '<div class="sec" style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">'
+      + '<span class="sv">'+sel.files.length+' file'+(sel.files.length===1?'':'s')+' in this version</span>'
+      + '<button class="btn lt" data-act="pane-analysis">Open the analysis →</button></div>'
+      + '</div></div></div>';
+  } else {
+    content = '<div class="frame"><div class="frhd"><span>Rendering <b>v'+sel.n+'</b> as a <b>'
+      + (asWho==='client'?'client consumer':'Blue Ops user')+'</b> receives it</span>'
+      + '<span class="lk" style="cursor:pointer;color:var(--blue-lt)" data-act="pane-overview">← Back to the overview page</span></div>'
+      + '<iframe class="pv tall" sandbox="allow-scripts" srcdoc="'+esc(sel.html)+'"></iframe></div>';
+  }
+  document.getElementById('app').innerHTML =
+    '<div class="body"><div class="inner">'
+    + '<div class="rowtop" style="margin-bottom:14px">'
+    + '<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">'
+    + '<span style="font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)">Seeing as</span>'
+    + '<span class="seg"><button data-act="as-me" class="'+(asWho==='me'?'on':'')+'">Me · Blue Ops</button>'
+    + '<button data-act="as-client" class="'+(asWho==='client'?'on':'')+'">Client consumer</button></span></div>'
+    + '<div style="display:flex;gap:9px;align-items:center;flex-wrap:wrap">'
+    + '<span class="seg"><button data-act="pane-overview" class="'+(pane==='overview'?'on':'')+'">Overview page</button>'
+    + '<button data-act="pane-analysis" class="'+(pane==='analysis'?'on':'')+'">The analysis</button></span>'
+    + (a.status!=='published'?'<button class="btn ok sm" data-act="publish">Publish to client</button>':'')
+    + '</div></div>'
+    + content
+    + '<p style="font-size:11px;color:var(--dim);margin-top:13px">The client gets both surfaces — the overview page first, the analysis behind it, with a way back. That is the loop the build is missing today.</p>'
+    + '</div></div>';
+}
+
+/* Content-first view: consultant and client both land here. Manage is a second step. */
+function stageBanner(a){
+  if(S.role!=='consultant') return '';
+  if(a.status==='published') return '<div class="hintbar">This is the <b>published</b> experience. Clients on '+(a.projects||[a.project]).map(esc).join(', ')+' see this. Use Manage only if you need to change it.</div>';
+  if(a.status==='retracted') return '<div class="hintbar">This analysis is <b>retracted</b>. Clients no longer see a tile. Bookmarked links show a withdrawn notice.</div>';
+  if(!a.versions.length) return '<div class="hintbar">This is a <b>draft with no HTML yet</b>. Clients cannot see it. Upload a version from Manage, or below.</div>';
+  return '<div class="hintbar">This is a <b>draft</b>. You are looking at the analysis itself. Clients cannot see it until you publish.</div>';
+}
+
+function renderClientAnalysis(){
+  const a = cur();
+  if(!a){ view={name:'shelf'}; return render(); }
+  if(S.role==='client' && a.status!=='published'){
+    document.getElementById('app').innerHTML = '<div class="body"><div class="inner"><div class="wd">'
+      + '<div class="wi">⤺</div><h1 class="pt sm">This analysis has been withdrawn</h1>'
+      + '<p class="plead" style="margin:auto">Your Blue Ops team has taken it down. Get in touch with them if you need it.</p></div></div></div>';
+    return;
+  }
+  const sel = a.status==='published'
+    ? a.versions.find(v=>v.id===a.liveVersionId)
+    : (a.versions.find(v=>v.id===a.selectedVersionId) || a.versions[a.versions.length-1]);
+  const manage = S.role==='consultant'
+    ? '<button class="btn gh sm" data-act="manage">Manage</button>' : '';
+  const banner = stageBanner(a);
+  const header = '<div class="rowtop" style="margin-bottom:12px"><div><h1 class="pt sm">'+esc(a.name)+'</h1>'
+    + '<p style="margin:4px 0 0;font-size:12px">'+statusChip(a)+'</p></div>'
+    + '<div style="display:flex;gap:8px">'
+    + (view.pane==='analysis'?'<button class="btn gh sm" data-act="pane-overview">← Back to the overview</button>':'')
+    + manage+'</div></div>';
+
+  if(!sel){
+    document.getElementById('app').innerHTML = '<div class="body"><div class="inner">'
+      + banner + header
+      + '<div class="empty" style="text-align:left;max-width:640px">'
+      + '<div class="e1" style="text-align:center">Nothing inside this analysis yet</div>'
+      + '<div class="e2" style="text-align:center">You created the shell — name, description and project bindings. The HTML is still missing, so there is no landing page and nothing to open.</div>'
+      + '<div style="border-top:1px solid var(--line-2);padding-top:14px;margin-bottom:14px">'
+      + '<div style="font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--dim);margin-bottom:9px">What happens next</div>'
+      + '<div class="fileline"><span><b>1.</b> Upload one standalone HTML file</span><span style="color:var(--amber)">Needed</span></div>'
+      + '<div class="fileline"><span><b>2.</b> Write the basis of presentation</span><span style="color:var(--dim)">'+(a.overview.basis?'Done':'Needed')+'</span></div>'
+      + '<div class="fileline"><span><b>3.</b> Preview, then publish to '+(a.projects||[a.project]).length+' project'+((a.projects||[a.project]).length===1?'':'s')+'</span><span style="color:var(--dim)">Locked</span></div>'
+      + '</div>'
+      + '<div style="display:flex;gap:9px;justify-content:center;flex-wrap:wrap">'
+      + '<button class="btn" data-act="new-version">Upload HTML</button>'
+      + '<button class="btn gh" data-act="manage">Manage</button>'
+      + (canDiscard(a)?'<button class="btn dgr" data-act="discard">Discard draft</button>':'')
+      + '</div></div></div></div>';
+    return;
+  }
+
+  if(view.pane==='analysis'){
+    document.getElementById('app').innerHTML = '<div class="body"><div class="inner">'
+      + banner + header
+      + '<div class="frame"><iframe class="pv tall" sandbox="allow-scripts" srcdoc="'+esc(sel.html)+'"></iframe></div>'
+      + '</div></div>';
+    return;
+  }
+
+  const shown = a.status==='published' ? a.versions.filter(v=>v.n<=sel.n) : a.versions;
+  document.getElementById('app').innerHTML = '<div class="body"><div class="inner">'
+    + banner + header
+    + '<div style="padding:8px 0 30px"><div class="cov">'
+    + '<div class="kick">Analysis · '+esc(S.project)+'</div>'
+    + '<h2>'+esc(a.name)+'</h2><div class="cd">'+esc(a.desc)+'</div>'
+    + (a.overview.startHere?'<div class="sec"><div class="sl">What to look at first</div><div class="sv">'+esc(a.overview.startHere)+'</div></div>':'')
+    + '<div class="sec"><div class="sl">Basis of presentation</div><div class="sv">'+esc(a.overview.basis||'—')+'</div></div>'
+    + '<div class="sec"><div class="sl">Versions delivered</div><div class="sv">'
+    + (shown.length?shown.slice().reverse().map(v=>'<b>v'+v.n+'</b> — '+fmtDate(v.createdAt)+(v.id===sel.id?' · current':'')).join('<br>'):'None yet')+'</div></div>'
+    + '<div class="sec" style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">'
+    + '<span class="sv">Prepared by BlueOps Partners</span>'
+    + '<button class="btn lt" data-act="pane-analysis">Open the analysis →</button></div>'
+    + '</div></div></div></div>';
+}
+
+function renderWorkflow(){
+  document.getElementById('app').innerHTML =
+    '<div class="body"><div class="story">'
+    + '<h2>Blue Ops Consultant workflow & user story</h2>'
+    + '<p class="plead" style="max-width:850px">This specification is generated from the 24 product-discovery answers behind the prototype. Items marked pending are deliberate policy decisions, not missing UI.</p>'
+    + '<div class="story-grid">'
+    + '<div class="story-card"><h4>Epic</h4><p><b>As an assigned Blue Ops Consultant,</b> I publish one immutable HTML analysis to the Diligent IQ projects I can access, so entitled clients can open the correct current version and nobody else can.</p><p style="margin:10px 0 0;font-size:12px;color:var(--muted)">Do not build this as one ticket. Split it on status change: shell → version → preview → publish → replace → retract. Empty discard is the only delete.</p></div>'
+    + '<div class="story-card"><h4>Success measure</h4><p>The intended client can open the correct active version from Atlas Studio, while drafts, retracted analyses, management controls and projects outside their access remain unavailable.</p></div>'
+    + '<div class="story-card"><h4>Happy-path journey</h4><ol>'
+    + '<li>Open Atlas Studio in the current project.</li><li>See one grid of draft, published and retracted analyses.</li>'
+    + '<li>Create an analysis with a name and client-facing description.</li><li>Keep the current project selected; optionally multi-select other accessible projects.</li>'
+    + '<li>Drag or select one standalone HTML file.</li><li>Resolve critical validation errors; review warnings.</li>'
+    + '<li>Preview the exact landing page and HTML as the client.</li><li>Review every target project and publish the selected version to all.</li>'
+    + '<li>Open the same client-first experience; use Manage only when changes are needed.</li></ol></div>'
+    + '<div class="story-card"><h4>Lifecycle</h4><ul>'
+    + '<li><b>Draft:</b> internal only; may be previewed, never visible to clients.</li>'
+    + '<li><b>Published:</b> one explicitly selected immutable version is active across all bound projects.</li>'
+    + '<li><b>Replacement:</b> current version remains live while a new draft is uploaded; consultant explicitly activates the replacement.</li>'
+    + '<li><b>Retracted:</b> tiles disappear; bookmarked links show a neutral withdrawn message; versions remain internally available.</li></ul></div>'
+    + '<div class="story-card"><h4>V1 user stories</h4><ol>'
+    + '<li><b>C1 Shelf.</b> Open Studio in the current project. See draft, published and retracted tiles; empty drafts labelled separately.</li>'
+    + '<li><b>C2 Create shell.</b> Name, description, multi-project bind defaulting to current. Clients still see nothing.</li>'
+    + '<li><b>C3 Open first.</b> Every tile click shows the analysis at its current stage. Manage is a second step.</li>'
+    + '<li><b>C4 Upload version.</b> One standalone HTML file, blocking validation, immutable. Bindings lock.</li>'
+    + '<li><b>C5 Preview.</b> Exact landing page and HTML. Does not publish.</li>'
+    + '<li><b>C6 Publish + CL1.</b> One confirmed action to all bound projects. Client can open only that version.</li>'
+    + '<li><b>C7 Replace.</b> New version stays draft until explicitly activated. History is kept.</li>'
+    + '<li><b>C8 Retract.</b> Tiles leave the client shelf. Bookmarks show withdrawn. Versions remain internally.</li>'
+    + '<li><b>C9 Discard empty.</b> Delete only a never-published draft with zero versions.</li></ol></div>'
+    + '<div class="story-card"><h4>Acceptance criteria</h4><ul>'
+    + '<li>Only assigned consultants can create or manage an analysis.</li>'
+    + '<li>The project picker lists only projects the consultant can access and defaults to the current project.</li>'
+    + '<li>Bindings lock after the first version is added.</li><li>Only one standalone .html file is accepted per version.</li>'
+    + '<li>Critical validation errors block preview and publish; warnings remain visible.</li>'
+    + '<li>Uploaded HTML is never editable in place.</li><li>Publishing enumerates every project and audience before confirmation.</li>'
+    + '<li>Clients never see drafts, retracted tiles, source, version controls or Manage.</li>'
+    + '<li>Published and draft tile clicks open the analysis experience first, not the management screen. Manage is a second step.</li></ul></div>'
+    + '<div class="story-card"><h4>Alternate and error paths</h4><ul>'
+    + '<li><b>Invalid file:</b> reject non-HTML, empty, incomplete, unsafe or oversized files with actionable errors.</li>'
+    + '<li><b>External dependency:</b> warn that remote assets may fail in the client environment.</li>'
+    + '<li><b>Wrong project:</b> change bindings before the first version; after that, create a separate analysis rather than silently moving client content.</li>'
+    + '<li><b>Replacement rejected:</b> current active version remains untouched.</li>'
+    + '<li><b>Retracted link:</b> show a neutral withdrawn page instead of a broken or stale analysis.</li></ul></div>'
+    + '<div class="story-card"><h4>Permissions</h4><ul>'
+    + '<li><b>Consultant:</b> view client experience, manage metadata, upload versions, select active version, publish and retract.</li>'
+    + '<li><b>Client consumer:</b> view published landing page and active HTML only.</li>'
+    + '<li><b>Ontario:</b> remains the source of project access and tab visibility; Atlas does not duplicate it.</li></ul></div>'
+    + '<div class="story-card"><h4>Policy decisions pending verification</h4><ul>'
+    + '<li><b>Publish permission:</b> prototype allows any consultant assigned to every selected project. Confirm whether a second person or Project Admin must approve.</li>'
+    + '<li><b>Retraction in M&A:</b> prototype removes tiles and leaves a withdrawn notice. Confirm notification, audit and buyer-cascade rules before production.</li>'
+    + '<li><b>Multi-project blast radius:</b> one action publishes to all selected projects, per discovery answer. This is intentionally loud in confirmation because it is the highest disclosure risk.</li></ul></div>'
+    + '</div></div></div>';
+}
+
+function render(){
+  renderChrome();
+  document.getElementById('projSel').value = S.project;
+  [...document.querySelectorAll('#roleSw button')].forEach(b=>b.classList.toggle('on', b.dataset.role===S.role));
+  if(view.name==='workflow'){ renderWorkflow(); return; }
+  if(S.role==='client'){
+    if(view.name==='shelf') renderShelf(); else renderClientAnalysis();
+    return;
+  }
+  if(view.name==='shelf') renderShelf();
+  else if(view.name==='client') renderClientAnalysis();
+  else if(view.name==='detail') renderDetail();
+  else if(view.name==='overview') renderOverview();
+  else if(view.name==='preview') renderPreview();
+}
+
+/* ═══════════════ modals ═══════════════ */
+function closeModal(){ document.getElementById('modalHost').innerHTML=''; pending=null; }
+function showModal(html){ document.getElementById('modalHost').innerHTML = '<div class="ovl" data-ovl>'+html+'</div>'; }
+
+function mNewAnalysis(){
+  showModal('<div class="modal"><div class="mh"><b>Create analysis</b><span class="x" data-act="close">×</span></div>'
+  + '<p class="md">The current project is selected by default. You may bind the same analysis to other projects you can access. Bindings lock after the first version is added.</p>'
+  + '<div class="field req"><div class="fl">NAME</div><input id="naName" placeholder="e.g. Average Ticket — Roofing"></div>'
+  + '<div class="field"><div class="fl">DESCRIPTION — SHOWN ON THE TILE</div><textarea id="naDesc" placeholder="One line the client will read on the tile."></textarea></div>'
+  + '<div class="field" style="background:#0a1224"><div class="fl">BIND TO PROJECTS YOU CAN ACCESS</div>'
+  + '<div class="project-picks">'+PROJECTS.map(p=>'<label class="project-pick'+(p===S.project?' on':'')+'"><input type="checkbox" name="naProjects" value="'+esc(p)+'" '+(p===S.project?'checked':'')+'>'
+    + '<span>'+esc(p)+'</span>'+(p===S.project?'<small>current</small>':'')+'</label>').join('')+'</div></div>'
+  + '<div class="mfoot"><button class="btn txt" data-act="close">Cancel</button><button class="btn" data-act="create-analysis">+ Create</button></div></div>');
+  setTimeout(()=>{ const n=document.getElementById('naName'); if(n) n.focus(); },30);
+}
+
+function mNewVersion(){
+  showModal('<div class="modal wide"><div class="mh"><b>New version</b><span class="x" data-act="close">×</span></div>'
+  + '<p class="md">Upload one standalone .html file. Atlas validates structure, unsafe navigation, external dependencies, scripts and size before a version can be published.</p>'
+  + '<div class="dropzone" id="dropzone" data-act="up-html"><b>Drag an HTML file here</b><span>or click to select one from your computer</span></div>'
+  + '<div class="upr"><button class="btn gh sm" data-act="up-html">⬆ Select HTML file</button>'
+  + '<span id="nvCount">no file selected</span><span class="lk" style="cursor:pointer" data-act="clear-files">× Clear</span></div>'
+  + '<div id="nvValidation"></div>'
+  + '<div class="mfoot"><button class="btn txt" data-act="close">Cancel</button>'
+  + '<button class="btn dn" id="createVersionBtn" data-act="validation-blocked">Create draft version</button></div></div>');
+}
+
+function mEditMetadata(){
+  const a=cur();
+  showModal('<div class="modal"><div class="mh"><b>Edit analysis details</b><span class="x" data-act="close">×</span></div>'
+    + '<p class="md">Name and description can change. Project bindings are '+(a.versions.length?'locked because a version exists.':'editable until the first version is added.')+'</p>'
+    + '<div class="field req"><div class="fl">NAME</div><input id="emName" value="'+esc(a.name)+'"></div>'
+    + '<div class="field"><div class="fl">DESCRIPTION</div><textarea id="emDesc">'+esc(a.desc)+'</textarea></div>'
+    + '<div class="field" style="background:#0a1224"><div class="fl">BOUND PROJECTS</div>'
+    + (a.versions.length
+      ? '<div class="fv">'+a.projects.map(p=>'<span class="st pj">'+esc(p)+'</span>').join(' ')+'</div>'
+      : '<div class="project-picks">'+PROJECTS.map(p=>'<label class="project-pick'+(a.projects.includes(p)?' on':'')+'"><input type="checkbox" name="emProjects" value="'+esc(p)+'" '+(a.projects.includes(p)?'checked':'')+'><span>'+esc(p)+'</span></label>').join('')+'</div>')
+    + '</div><div class="mfoot"><button class="btn txt" data-act="close">Cancel</button><button class="btn" data-act="save-metadata">Save</button></div></div>');
+}
+
+function mDiscard(){
+  const a=cur();
+  showModal('<div class="modal"><div class="mh"><b>Discard this draft?</b><span class="x" data-act="close">×</span></div>'
+  + '<p class="md">This analysis has no HTML and has never been published, so nothing has ever reached a client. It is the only state that is safe to delete outright.</p>'
+  + '<div class="conseq">'
+  + '<div><span>Name, description and bindings</span><span class="a">Deleted</span></div>'
+  + '<div><span>Versions lost</span><span class="w">None — nothing uploaded</span></div>'
+  + '<div><span>Client impact</span><span class="y">None</span></div>'
+  + '</div>'
+  + '<div class="mfoot"><button class="btn txt" data-act="close">Cancel</button>'
+  + '<button class="btn dgr" data-act="do-discard">Discard '+esc(a.name)+'</button></div></div>');
+}
+
+function mPublish(){
+  const a = cur();
+  const sel = a.versions.find(v=>v.id===a.selectedVersionId) || a.versions[a.versions.length-1];
+  const first = !a.versions.some(v=>v.id===a.liveVersionId) && a.status!=='published';
+  showModal('<div class="modal"><div class="mh"><b>Publish to '+a.projects.length+' project'+(a.projects.length===1?'':'s')+'?</b><span class="x" data-act="close">×</span></div>'
+  + '<p class="md">One action publishes the same immutable version to every bound project. Review the complete audience before continuing.</p>'
+  + '<div class="conseq">'
+  + a.projects.map(p=>'<div><span><b class="w">'+esc(p)+'</b><br><small>'+a.totalUsers+' project users</small></span><span class="y">v'+sel.n+' will go live</span></div>').join('')
+  + '<div><span>The Analysis tab becomes visible</span><span class="'+(first?'y':'w')+'">'+(first?'First publish':'Already on')+'</span></div>'
+  + '<div><span>Version they will see</span><span class="w">v'+sel.n+' · '+sel.files.length+' file'+(sel.files.length===1?'':'s')+'</span></div>'
+  + '<div><span>Reversible</span><span class="y">Yes — retract any time</span></div></div>'
+  + '<div class="field"><div class="fl">NOTE FOR THE RECORD — OPTIONAL</div>'
+  + '<input id="pubNote" placeholder="e.g. issued ahead of the 22 Sep session"></div>'
+  + '<div class="mfoot"><button class="btn txt" data-act="close">Cancel</button>'
+  + '<button class="btn ok" data-act="do-publish" data-vid="'+sel.id+'">Publish v'+sel.n+' to all '+a.projects.length+'</button></div></div>');
+}
+
+function mRetract(){
+  const a = cur();
+  showModal('<div class="modal"><div class="mh"><b>Retract from the client?</b><span class="x" data-act="close">×</span></div>'
+  + '<p class="md">'+(a.openedBy>0? a.openedBy+' client opens are recorded. Retracting affects every bound project.' : 'Nobody has opened this yet. Retracting still affects every bound project.')+'</p>'
+  + '<div class="conseq">'
+  + a.projects.map(p=>'<div><span>'+esc(p)+'</span><span class="a">Tile removed</span></div>').join('')
+  + '<div><span>The tile disappears from their tab</span><span class="a">Yes</span></div>'
+  + '<div><span>Anyone holding the link sees</span><span class="w">"Withdrawn"</span></div>'
+  + '<div><span>The version itself</span><span class="y">Kept, openable internally</span></div>'
+  + '<div><span>Re-publish later</span><span class="y">Any time</span></div></div>'
+  + '<div class="field"><div class="fl">REASON — RECORDED, NOT SHOWN TO THE CLIENT</div>'
+  + '<input id="retReason" placeholder="e.g. restating wallet share; v2 to follow today"></div>'
+  + '<div class="mfoot"><button class="btn txt" data-act="close">Cancel</button>'
+  + '<button class="btn dgr" data-act="do-retract">Retract</button></div></div>');
+}
+
+/* ═══════════════ actions ═══════════════ */
+document.addEventListener('click', async e=>{
+  const t = e.target.closest('[data-act]');
+  if(e.target.hasAttribute && e.target.hasAttribute('data-ovl')){ closeModal(); return; }
+  if(!t) return;
+  const act = t.dataset.act, a = cur();
+
+  switch(act){
+    case 'close': closeModal(); break;
+    case 'reset': localStorage.removeItem(LS); S = seed(); view={name:'shelf'}; closeModal(); render(); toast('Demo reset'); break;
+    case 'go-shelf': view={name:'shelf'}; render(); break;
+    case 'workflow': closeModal(); view={name:'workflow'}; render(); break;
+
+    case 'open': {
+      const id = t.dataset.id;
+      const an = S.analyses.find(x=>x.id===id);
+      if(S.role==='client'){ an.openedBy = Math.min(an.totalUsers, (an.openedBy||0)+1); save(); }
+      view = {name:'client', id, pane:'overview'};
+      render(); break;
+    }
+    case 'manage': view={name:'detail',id:a.id}; render(); break;
+    case 'discard': if(canDiscard(a)) mDiscard(); else toast('Only an empty, never-published draft can be discarded'); break;
+    case 'do-discard': {
+      if(!canDiscard(a)){ toast('This analysis can no longer be discarded'); break; }
+      const name=a.name;
+      S.analyses = S.analyses.filter(x=>x.id!==a.id);
+      save(); closeModal(); view={name:'shelf'}; render(); toast('Discarded '+name); break;
+    }
+    case 'new-analysis': mNewAnalysis(); break;
+    case 'create-analysis': {
+      const name = document.getElementById('naName').value.trim();
+      if(!name){ toast('Give it a name'); break; }
+      const projects=[...document.querySelectorAll('input[name="naProjects"]:checked')].map(x=>x.value);
+      if(!projects.length){ toast('Select at least one project'); break; }
+      const id = 'a'+Date.now();
+      S.analyses.push({ id, name, desc: document.getElementById('naDesc').value.trim(),
+        project: projects[0], projects, status:'draft', versions:[], liveVersionId:null, selectedVersionId:null,
+        overview:{basis:'',startHere:''}, totalUsers:10, openedBy:0, note:'', retractReason:'' });
+      save(); closeModal(); view={name:'client', id, pane:'overview'};
+      render(); toast('Created — now add a version');
+      setTimeout(mNewVersion, 260); break;
+    }
+    case 'edit-metadata': mEditMetadata(); break;
+    case 'save-metadata': {
+      const name=document.getElementById('emName').value.trim();
+      if(!name){ toast('Give it a name'); break; }
+      a.name=name; a.desc=document.getElementById('emDesc').value.trim();
+      if(!a.versions.length){
+        const projects=[...document.querySelectorAll('input[name="emProjects"]:checked')].map(x=>x.value);
+        if(!projects.length){ toast('Select at least one project'); break; }
+        a.projects=projects; a.project=projects[0];
+      }
+      save(); closeModal(); render(); toast('Analysis details saved'); break;
+    }
+
+    case 'new-version': pending=null; mNewVersion(); break;
+    case 'up-html': document.getElementById('fiHtml').click(); break;
+    case 'clear-files': pending=null; setCount('no file selected'); {
+      const vh=document.getElementById('nvValidation'); if(vh) vh.innerHTML='';
+      const cb=document.getElementById('createVersionBtn');
+      if(cb){ cb.className='btn dn'; cb.dataset.act='validation-blocked'; }
+      break;
+    }
+    case 'validation-blocked': toast('Resolve critical validation errors first'); break;
+    case 'create-version': {
+      if(!pending || !pending.validation.ready){ toast('Choose a valid standalone HTML file'); break; }
+      const html=pending.html, files=pending.files;
+      const n = a.versions.length+1, id = 'v'+Date.now();
+      a.versions.push({ id, n, files: files.map(f=>({path:f.path,size:f.size})), html, validation:pending.validation, createdAt: Date.now() });
+      a.selectedVersionId = id;
+      save(); closeModal();
+      view = view.name==='client' ? {name:'client', id:a.id, pane:'overview'} : {name:'detail', id:a.id};
+      render(); toast('v'+n+' created as a draft'); break;
+    }
+    case 'pick-version': a.selectedVersionId = t.dataset.vid; save(); render(); break;
+
+    case 'go-overview': view={name:'overview', id:a.id}; render(); break;
+    case 'save-overview': {
+      a.overview.basis = document.getElementById('ovBasis').value.trim();
+      a.overview.startHere = document.getElementById('ovStart').value.trim();
+      save(); toast('Overview page saved'); break;
+    }
+    case 'go-preview': {
+      if(!a.versions.length){ toast('Add a version first'); break; }
+      const sv=a.versions.find(v=>v.id===a.selectedVersionId)||a.versions[a.versions.length-1];
+      if(!sv.validation || !sv.validation.ready){ toast('Resolve critical validation errors before preview'); break; }
+      view={name:'preview', id:a.id, pane:'overview', as:'client'}; render(); break;
+    }
+    case 'as-me': view.as='me'; render(); break;
+    case 'as-client': view.as='client'; render(); break;
+    case 'pane-overview': view.pane='overview'; render(); break;
+    case 'pane-analysis': view.pane='analysis'; render(); break;
+
+    case 'publish': {
+      if(!a.versions.length){ toast('Add a version first'); break; }
+      const sv=a.versions.find(v=>v.id===a.selectedVersionId)||a.versions[a.versions.length-1];
+      if(!sv.validation || !sv.validation.ready){ toast('Resolve critical validation errors first'); break; }
+      if(!a.overview.basis){ toast('Add the basis of presentation before publishing'); view={name:'overview',id:a.id}; render(); break; }
+      mPublish(); break;
+    }
+    case 'do-publish': {
+      a.liveVersionId = t.dataset.vid;
+      a.status = 'published';
+      a.note = (document.getElementById('pubNote')||{}).value || '';
+      a.retractReason = '';
+      save(); closeModal(); view={name:'detail', id:a.id}; render();
+      toast('Published — switch to Client consumer above to see it'); break;
+    }
+    case 'replace': {
+      const sv=a.versions.find(v=>v.id===a.selectedVersionId);
+      if(!sv.validation || !sv.validation.ready){ toast('That version is not ready'); break; }
+      a.liveVersionId = a.selectedVersionId; save(); render();
+      toast('Live version replaced'); break;
+    }
+    case 'retract': mRetract(); break;
+    case 'do-retract': {
+      a.status = 'retracted';
+      a.retractReason = (document.getElementById('retReason')||{}).value || '';
+      save(); closeModal(); render(); toast('Retracted — the client tile is gone'); break;
+    }
+  }
+});
+
+function setCount(txt){ const el = document.getElementById('nvCount'); if(el) el.textContent = txt; }
+async function handleFiles(fl){
+  setCount('reading…');
+  const res = await ingest(fl);
+  if(!res){ setCount('no file selected'); return; }
+  pending = res;
+  setCount(res.files[0].path+' · '+fmtBytes(res.files[0].size));
+  const vh=document.getElementById('nvValidation');
+  if(vh) vh.innerHTML=validationMarkup({html:res.html,validation:res.validation});
+  const cb=document.getElementById('createVersionBtn');
+  if(cb){
+    cb.className='btn '+(res.validation.ready?'':'dn');
+    cb.dataset.act=res.validation.ready?'create-version':'validation-blocked';
+  }
+  toast(res.validation.ready?'Validation passed — ready to create draft':'Validation found blocking errors');
+}
+document.getElementById('fiHtml').addEventListener('change', ev=>{ if(ev.target.files.length) handleFiles(ev.target.files); ev.target.value=''; });
+document.addEventListener('change',ev=>{
+  if(ev.target.matches('input[name="naProjects"],input[name="emProjects"]')){
+    const label=ev.target.closest('.project-pick'); if(label) label.classList.toggle('on',ev.target.checked);
+  }
+});
+document.addEventListener('dragover',ev=>{
+  const dz=document.getElementById('dropzone');
+  if(dz){ ev.preventDefault(); dz.classList.add('over'); }
+});
+document.addEventListener('dragleave',ev=>{
+  const dz=document.getElementById('dropzone'); if(dz) dz.classList.remove('over');
+});
+document.addEventListener('drop',ev=>{
+  const dz=document.getElementById('dropzone');
+  if(!dz) return;
+  ev.preventDefault(); dz.classList.remove('over');
+  if(ev.dataTransfer.files.length) handleFiles(ev.dataTransfer.files);
+});
+
+document.getElementById('projSel').innerHTML = PROJECTS.map(p=>'<option>'+p+'</option>').join('');
+document.getElementById('projSel').addEventListener('change', ev=>{ S.project = ev.target.value; view={name:'shelf'}; save(); render(); });
+document.getElementById('roleSw').addEventListener('click', ev=>{
+  const b = ev.target.closest('button[data-role]'); if(!b) return;
+  S.role = b.dataset.role; view={name:'shelf'}; save(); render();
+});
+
+load(); render();
+</script>
+</body>
+</html>
