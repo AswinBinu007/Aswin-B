@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Atlas Check-in — 18 Sep 2026 · Senior briefing</title>
+<style>
+  :root {
+    --ink: #152033;
+    --muted: #5a6780;
+    --line: #d5dde9;
+    --paper: #f3f5f9;
+    --card: #ffffff;
+    --navy: #1a3a6b;
+    --navy-deep: #122848;
+    --teal: #0f6e6a;
+    --amber: #8a5a00;
+    --amber-bg: #fff6e5;
+    --green: #1b6b45;
+    --green-bg: #e8f6ee;
+    --red: #9b2c2c;
+    --red-bg: #fdeeee;
+    --blue-bg: #eaf0fa;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font: 15px/1.55 "Segoe UI", system-ui, sans-serif;
+    color: var(--ink);
+    background: var(--paper);
+  }
+  .top {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: var(--navy-deep);
+    color: #fff;
+    border-bottom: 3px solid #c9a227;
+  }
+  .top-inner {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 14px 20px 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 18px;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+  .top h1 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: .01em;
+  }
+  .top .meta {
+    margin: 0;
+    font-size: 12px;
+    color: #b8c7de;
+  }
+  .nav {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 20px 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .nav a {
+    color: #d7e3f5;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 650;
+    padding: 5px 10px;
+    border-radius: 6px;
+    border: 1px solid #3a5278;
+  }
+  .nav a:hover { background: #1e3a62; color: #fff; }
+  .wrap {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 22px 20px 72px;
+  }
+  .hero {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 22px 24px;
+    margin-bottom: 16px;
+  }
+  .hero h2 {
+    margin: 0 0 8px;
+    font-size: 22px;
+    color: var(--navy);
+  }
+  .hero .one-liner {
+    margin: 0 0 14px;
+    font-size: 16px;
+    color: var(--ink);
+    max-width: 62ch;
+  }
+  .badges { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 14px; }
+  .badge {
+    display: inline-block;
+    padding: 4px 9px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .02em;
+  }
+  .badge.blue { background: var(--blue-bg); color: var(--navy); }
+  .badge.amber { background: var(--amber-bg); color: var(--amber); }
+  .badge.green { background: var(--green-bg); color: var(--green); }
+  .badge.red { background: var(--red-bg); color: var(--red); }
+  .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  @media (max-width: 820px) {
+    .grid-3, .grid-2, .own-grid { grid-template-columns: 1fr; }
+  }
+  .stat {
+    background: var(--blue-bg);
+    border-radius: 10px;
+    padding: 12px 14px;
+  }
+  .stat b { display: block; font-size: 13px; color: var(--navy); margin-bottom: 4px; }
+  .stat span { font-size: 13px; color: var(--muted); }
+  .timing {
+    margin-top: 14px;
+    border-left: 3px solid var(--teal);
+    background: #eef8f7;
+    padding: 10px 12px;
+    border-radius: 0 8px 8px 0;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .timing strong { color: var(--ink); }
+  section {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 22px 24px;
+    margin-bottom: 14px;
+  }
+  section > h2 {
+    margin: 0 0 4px;
+    font-size: 18px;
+    color: var(--navy);
+  }
+  .agenda-tag {
+    font-size: 11px;
+    font-weight: 750;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 10px;
+  }
+  h3 {
+    margin: 18px 0 8px;
+    font-size: 14px;
+    color: var(--navy-deep);
+  }
+  h3:first-of-type { margin-top: 12px; }
+  p { margin: 0 0 10px; }
+  .muted { color: var(--muted); }
+  ul, ol { margin: 0 0 10px; padding-left: 20px; }
+  li { margin-bottom: 6px; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin: 8px 0 12px;
+  }
+  th, td {
+    border: 1px solid var(--line);
+    padding: 8px 10px;
+    text-align: left;
+    vertical-align: top;
+  }
+  th {
+    background: #eef2f8;
+    color: var(--navy);
+    font-weight: 700;
+    font-size: 12px;
+  }
+  tr.now { background: #fff8e8; }
+  tr.past { background: #f7f8fb; color: var(--muted); }
+  .callout {
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin: 12px 0;
+    font-size: 13.5px;
+  }
+  .callout.warn { background: var(--amber-bg); border: 1px solid #e8d09a; }
+  .callout.good { background: var(--green-bg); border: 1px solid #b7dfc8; }
+  .callout.risk { background: var(--red-bg); border: 1px solid #efbcbc; }
+  .callout.info { background: var(--blue-bg); border: 1px solid #c5d4ec; }
+  .callout b { display: block; margin-bottom: 4px; }
+  .own-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .person {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 14px;
+    background: #fafbfd;
+  }
+  .person .name { font-weight: 750; color: var(--navy); margin-bottom: 2px; }
+  .person .role { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+  .person ul { margin: 0; padding-left: 16px; font-size: 13px; }
+  .gate {
+    display: grid;
+    grid-template-columns: 120px 1fr 100px;
+    gap: 8px;
+    align-items: start;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 13.5px;
+  }
+  .gate:last-child { border-bottom: 0; }
+  .gate .label { font-weight: 700; color: var(--navy); }
+  .status-pill {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 750;
+    text-align: center;
+  }
+  .status-pill.done { background: var(--green-bg); color: var(--green); }
+  .status-pill.open { background: var(--amber-bg); color: var(--amber); }
+  .status-pill.notyet { background: #eceff4; color: var(--muted); }
+  .notes {
+    margin-top: 14px;
+    background: #151821;
+    color: #e8ecf2;
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 13px;
+  }
+  .notes .title {
+    font-size: 11px;
+    font-weight: 750;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: #9aa3b2;
+    margin-bottom: 6px;
+  }
+  .notes ul { margin: 0; padding-left: 18px; color: #cdd4df; }
+  .notes li { margin-bottom: 4px; }
+  .actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin: 0 0 16px;
+  }
+  .btn {
+    display: inline-block;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: var(--navy);
+    color: #fff;
+    text-decoration: none;
+    font-weight: 650;
+    font-size: 13px;
+    border: 0;
+    cursor: pointer;
+  }
+  .btn.ghost {
+    background: #fff;
+    color: var(--ink);
+    border: 1px solid var(--line);
+  }
+  footer {
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  @media print {
+    .top { position: static; }
+    .nav, .actions { display: none; }
+    body { background: #fff; }
+    section, .hero { break-inside: avoid; box-shadow: none; }
+    .notes { background: #f4f4f4; color: #222; }
+    .notes .title, .notes ul { color: #444; }
+  }
+</style>
+</head>
+<body>
+  <header class="top">
+    <div class="top-inner">
+      <div>
+        <h1>Atlas Check-in · Senior briefing</h1>
+        <p class="meta">Friday 18 Sep 2026 · 11:30–12:00 · With Darragh Cresham &amp; Christopher Broderick · Prepared by Aswin Binu (Product Owner)</p>
+      </div>
+      <p class="meta">30 minutes · walk-through + Q&amp;A</p>
+    </div>
+    <nav class="nav" aria-label="Agenda">
+      <a href="#context">0 · Context</a>
+      <a href="#plan">1 · Where we are</a>
+      <a href="#design">2 · Design &amp; ownership</a>
+      <a href="#governance">3 · Sign-off &amp; gates</a>
+      <a href="#next">4 · Next steps</a>
+      <a href="#ask">What we need today</a>
+    </nav>
+  </header>
+
+  <main class="wrap">
+    <div class="actions">
+      <button class="btn" type="button" onclick="window.print()">Print / Save PDF</button>
+      <a class="btn ghost" href="https://ebmsoftware.atlassian.net/jira/software/c/projects/ATLAS/boards/1557" target="_blank" rel="noopener">Open Atlas Jira board</a>
+    </div>
+
+    <!-- 0 CONTEXT -->
+    <div class="hero" id="context">
+      <p class="agenda-tag">Start here · 3 minutes</p>
+      <h2>What Atlas is (in one sentence)</h2>
+      <p class="one-liner">
+        Atlas is the place inside Diligent IQ where Blue Ops consultants publish finished offline analysis packages (HTML dashboards) so entitled clients can open them securely — instead of emailing files or hosting them on an unsecured public site.
+      </p>
+      <div class="badges">
+        <span class="badge blue">Project ID 2026-1</span>
+        <span class="badge blue">Charter start 10 Aug 2026</span>
+        <span class="badge amber">Today = end of Sprint 3</span>
+        <span class="badge green">V1 scope locked 15 Sep</span>
+        <span class="badge red">Production build not started</span>
+      </div>
+      <div class="grid-3">
+        <div class="stat">
+          <b>Problem we solve</b>
+          <span>Analyses are prepared offline (Reid / Blue Ops). V1 is how we get a finished package into Diligent IQ with security, versioning, and a client experience.</span>
+        </div>
+        <div class="stat">
+          <b>What V1 is not</b>
+          <span>Not a live query engine. Not an HTML editor. Not a marketplace/checkout. Not Directus as the V1 control plane (deferred to V2).</span>
+        </div>
+        <div class="stat">
+          <b>North-star date</b>
+          <span>1–3 pilot analyses usable for clients ahead of Diligent IQ external launch (~1 Dec). Internal production smoke before that.</span>
+        </div>
+      </div>
+      <div class="timing">
+        <strong>Suggested 30-minute flow:</strong>
+        0–3 Context · 3–10 Plan · 10–18 Design / ownership · 18–25 Sign-off &amp; gates · 25–30 Next steps &amp; decisions.
+        Pause for questions after each block; do not demo deep UI unless asked.
+      </div>
+    </div>
+
+    <!-- 1 PLAN -->
+    <section id="plan">
+      <p class="agenda-tag">Agenda 1 · ~7 minutes</p>
+      <h2>1. Project plan — where are we</h2>
+      <p class="muted">Plain status for someone who has not lived in the day-to-day: we are past discovery, finishing definition/prototype validation, and entering the design + first engineering sprint on Monday.</p>
+
+      <h3>Phase in one glance</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Phase</th>
+            <th>When</th>
+            <th>What happened</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="past">
+            <td>Kickoff / Discovery</td>
+            <td>10–21 Aug</td>
+            <td>Charter approved. Pilot candidates identified. Problem framed around secure delivery of analyses in Diligent IQ.</td>
+            <td>Done</td>
+          </tr>
+          <tr class="past">
+            <td>Definition</td>
+            <td>late Aug – mid Sep</td>
+            <td>Roles, journeys, consultant vs client behaviour. Working sessions with engineering / design. Scope debate: live apps vs finished packages.</td>
+            <td>Done / locked</td>
+          </tr>
+          <tr class="now">
+            <td><b>Prototype validation</b></td>
+            <td><b>7–20 Sep (Sprint 3)</b></td>
+            <td>Consultant end-to-end prototype. Board &amp; backlog rebuilt. V1 user stories written with acceptance criteria. Figma work queued.</td>
+            <td><b>This week</b></td>
+          </tr>
+          <tr>
+            <td>Design + foundation build</td>
+            <td>21 Sep – 4 Oct (Sprint 4)</td>
+            <td>Arnav Figma for shelf, create, upload, publish, retract. Daniel first stories (shelf, create shell, content-first open). Policy spikes.</td>
+            <td>Starts Monday</td>
+          </tr>
+          <tr>
+            <td>Upload / preview</td>
+            <td>5–18 Oct (Sprint 5)</td>
+            <td>Immutable HTML upload + validation. Exact client preview. QA test plan &amp; fixtures.</td>
+            <td>Planned</td>
+          </tr>
+          <tr>
+            <td>Publish lifecycle</td>
+            <td>19 Oct – 1 Nov (Sprint 6)</td>
+            <td>Publish to all bound projects, replace version, retract, client-only published view, discard empty draft.</td>
+            <td>Planned</td>
+          </tr>
+          <tr>
+            <td>UAT → launch prep → pilot</td>
+            <td>Nov – Dec (Sprints 7–10)</td>
+            <td>Instrumentation, UAT, support model, internal production smoke, go/no-go, external pilot 1–3 analyses, lessons learned.</td>
+            <td>Planned</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>What “done enough” looks like for V1</h3>
+      <ul>
+        <li>Consultant opens Atlas Studio inside a Diligent IQ project and sees analysis cards (draft / published / retracted).</li>
+        <li>Creates an analysis shell, binds one or more projects they can access (current project default; multi-select allowed).</li>
+        <li>Uploads one standalone HTML file as an immutable version; validation blocks unsafe / invalid packages.</li>
+        <li>Previews the exact client landing page + HTML before publish.</li>
+        <li>Publishes once to all bound projects; clients see only published active version; no drafts, no Manage.</li>
+        <li>Can replace (stage then activate) and retract without deleting history.</li>
+        <li>Security reuses Diligent IQ project membership — Atlas does not invent a second entitlement system.</li>
+      </ul>
+
+      <div class="callout good">
+        <b>Honest position on 18 Sep</b>
+        Definition is solid enough to build against. A clickable consultant prototype exists to show the intended journey. The Jira board is populated (epics + ~30 stories/tasks, owners, sprint labels, dates). We are <em>not</em> yet shipping production code behind signed-off Figma. That is intentional: 15 Sep locked V1 as a versioned delivery shelf, which changed earlier assumptions about live apps / Directus.
+      </div>
+
+      <div class="callout warn">
+        <b>Calendar reality</b>
+        Sprint numbering starts at charter day 1 (10 Aug). Today sits in Sprint 3. The next active delivery sprint to <em>start</em> in Jira is Sprint 4 (21 Sep – 4 Oct). Empty Active-sprints board ≠ empty project — tickets live in Backlog until a sprint is started.
+      </div>
+
+      <div class="notes">
+        <div class="title">Talking points if they dig in</div>
+        <ul>
+          <li>“Are we late?” — Discovery/definition took longer because scope was contested (live run vs offline package). 15 Sep closed that. Plan now maps to Dec pilot.</li>
+          <li>“What about Arthur?” — Sister project; Diligent IQ is the shared channel. Atlas rides the same Dec client window. Do not conflate folder/task work with Atlas publishing.</li>
+          <li>“Where is the board?” — ATLAS project, board 1557. Columns: Backlog → To Do → UI/UX → Ready for Development → In Progress → Review → QA/UAT → Done.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 2 DESIGN -->
+    <section id="design">
+      <p class="agenda-tag">Agenda 2 · ~8 minutes</p>
+      <h2>2. Design check-in — engagement and who is owing</h2>
+      <p class="muted">Design is the critical path for the next two weeks. Engineering is ready but Figma-gated for the first three build stories.</p>
+
+      <h3>Who owns what</h3>
+      <div class="own-grid">
+        <div class="person">
+          <div class="name">Aswin Binu</div>
+          <div class="role">Product Owner / Project Lead</div>
+          <ul>
+            <li>Owns V1 scope, acceptance, prioritisation</li>
+            <li>Owns empty-draft policy spike</li>
+            <li>Facilitates this governance with seniors</li>
+            <li>Owes: keep Sprint 4 backlog clear and decisions timed</li>
+          </ul>
+        </div>
+        <div class="person">
+          <div class="name">Arnav Sameer</div>
+          <div class="role">UI / UX design</div>
+          <ul>
+            <li>Owns all Sprint 4 Figma frames (6 design tasks)</li>
+            <li>Shelf + card states, create + multi-project, upload/validation, preview/landing, publish/replace/retract confirmations, content-first / empty draft</li>
+            <li>Owes: design-ready frames for Emily / product review mid–Sprint 4</li>
+          </ul>
+        </div>
+        <div class="person">
+          <div class="name">Daniel Słaby</div>
+          <div class="role">Engineering (Diligent IQ / Atlas)</div>
+          <ul>
+            <li>Owns implementation stories (shelf, create, content-first first)</li>
+            <li>Earlier demos informed the V1 reset</li>
+            <li>Owes: build only against accepted Figma + acceptance criteria</li>
+            <li>Does not own journey product sign-off</li>
+          </ul>
+        </div>
+        <div class="person">
+          <div class="name">Emily Popp</div>
+          <div class="role">Business / Blue Ops alignment</div>
+          <ul>
+            <li>Owns journey verification and publish / retract policy spikes</li>
+            <li>Owns go/no-go coordination later</li>
+            <li>Owes: confirm journeys match consultant reality before heavy build</li>
+          </ul>
+        </div>
+        <div class="person">
+          <div class="name">Reid Mason</div>
+          <div class="role">Package / QA / analytics author</div>
+          <ul>
+            <li>Owns package fixtures, test plan, UAT evidence</li>
+            <li>Produces the offline HTML that Atlas must host exactly</li>
+            <li>Owes: Sprint 5 test plan; later UAT sign-off evidence</li>
+          </ul>
+        </div>
+        <div class="person">
+          <div class="name">John Derus / Mike Skillingstad</div>
+          <div class="role">Business sponsors (as needed)</div>
+          <ul>
+            <li>V1 intent confirmed 15 Sep: display finished offline analyses</li>
+            <li>Owe: business sign-off on go/no-go and pilot audience when we reach that gate</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3>Design work queued (Sprint 4)</h3>
+      <table>
+        <thead>
+          <tr><th>Ticket</th><th>Design outcome</th><th>Owner</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>ATLAS-18</td><td>Studio shelf + card states (published, draft, empty, retracted, client shelf)</td><td>Arnav</td><td>UI/UX</td></tr>
+          <tr><td>ATLAS-19</td><td>Create analysis + multi-project selection</td><td>Arnav</td><td>UI/UX</td></tr>
+          <tr><td>ATLAS-23</td><td>HTML upload, validation, version management</td><td>Arnav</td><td>UI/UX</td></tr>
+          <tr><td>ATLAS-22</td><td>Exact preview + client landing page</td><td>Arnav</td><td>UI/UX</td></tr>
+          <tr><td>ATLAS-20</td><td>Publish / replace / retract confirmations (blast radius clear)</td><td>Arnav</td><td>UI/UX</td></tr>
+          <tr><td>ATLAS-25</td><td>Content-first analysis + empty-draft experience</td><td>Arnav</td><td>UI/UX</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Engagement reality (what seniors should know)</h3>
+      <ul>
+        <li><b>Product–engineering–design loop is active.</b> Working sessions in September reset V1 away from “live applications in Atlas” toward “host Reid’s finished HTML securely.”</li>
+        <li><b>Consultant prototype exists</b> as a shared reference for journeys (create → upload → preview → publish → replace → retract; content opens before Manage). It is a design/requirements aid, not production.</li>
+        <li><b>Emily’s journey verification is the engagement gate</b> between “we think this is right” and “Daniel builds against Figma.” Without that, we risk building the wrong Manage vs content-first behaviour.</li>
+        <li><b>Who is owing this week:</b> Arnav (Figma start), Emily (journey + policy confirmation), Aswin (keep decisions unblocked), Daniel (ready to take accepted frames into Ready for Development).</li>
+      </ul>
+
+      <div class="callout info">
+        <b>Product rule already decided (so design is not inventing it)</b>
+        Clicking a card always opens the analysis content first. Manage is a second, consultant-only action. Clients never see drafts or admin chrome. Publish hits all bound projects in one confirmed action. Retract removes client tiles and keeps history.
+      </div>
+
+      <div class="notes">
+        <div class="title">Talking points</div>
+        <ul>
+          <li>If asked “is design late?” — Design was blocked on scope clarity until 15 Sep. It is now the explicit Sprint 4 focus, not a side activity.</li>
+          <li>If asked “can engineering start Monday?” — Foundation stories are written and assigned; they remain Figma-gated. Parallel: policy spikes and Arnav screens.</li>
+          <li>Do not promise a full Figma pack by next Friday unless Arnav has already committed that in the room.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 3 GOVERNANCE -->
+    <section id="governance">
+      <p class="agenda-tag">Agenda 3 · ~7 minutes</p>
+      <h2>3. Sign-off governance</h2>
+      <p class="muted">Direct answers to Darragh’s questions: what is in build, when it was signed off, what gates we use, who reviews design.</p>
+
+      <h3>A. What, if anything, is in “build” right now?</h3>
+      <div class="callout warn">
+        <b>Short answer: nothing is in production build under a signed design pack yet.</b>
+        What exists today is definition + a consultant prototype + a structured backlog. Daniel’s early Diligent IQ / Atlas demos were exploratory and helped force the V1 reset; they are not the signed V1 delivery. Sprint 4 engineering stories (shelf, create shell, content-first open) are ready to move when design is accepted — labelled Figma-gated on purpose.
+      </div>
+      <table>
+        <thead>
+          <tr><th>Work type</th><th>Exists today?</th><th>Signed off as V1?</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Charter / problem statement</td><td>Yes</td><td>Yes (Aug)</td></tr>
+          <tr><td>V1 scope: offline HTML delivery shelf</td><td>Yes</td><td>Yes (15 Sep working session)</td></tr>
+          <tr><td>User stories + acceptance criteria in Jira</td><td>Yes</td><td>Product-accepted drafts; still design-gated for UI stories</td></tr>
+          <tr><td>Consultant clickable prototype</td><td>Yes</td><td>Reference only — not production sign-off</td></tr>
+          <tr><td>Figma design pack</td><td>In progress (Sprint 4)</td><td>Not yet</td></tr>
+          <tr><td>Production Diligent IQ feature code for V1</td><td>No</td><td>N/A</td></tr>
+        </tbody>
+      </table>
+
+      <h3>B. When was this signed off?</h3>
+      <ul>
+        <li><b>10 Aug 2026</b> — Project charter approved; Atlas kickoff.</li>
+        <li><b>15 Sep 2026</b> — Scope lock for V1: finished offline analyses into Diligent IQ; version control; Diligent security; not live model execution inside Atlas.</li>
+        <li><b>Design sign-off</b> — Not complete. Planned during Sprint 4 after Arnav frames + Emily journey check.</li>
+        <li><b>Build sign-off / Ready for Development</b> — Requires accepted acceptance criteria + design where UI is involved.</li>
+        <li><b>Release sign-off</b> — Explicit go/no-go ticket (ATLAS-34) in Sprint 8, after UAT and internal smoke.</li>
+      </ul>
+
+      <h3>C. What gates do we use?</h3>
+      <div class="gate">
+        <div class="label">Gate 0</div>
+        <div>Scope lock — offline package shelf vs live apps</div>
+        <div><span class="status-pill done">Passed 15 Sep</span></div>
+      </div>
+      <div class="gate">
+        <div class="label">Gate 1</div>
+        <div>Journey + policy — Emily confirms consultant journeys; publish permission; M&amp;A retract behaviour</div>
+        <div><span class="status-pill open">Open · Sprint 4</span></div>
+      </div>
+      <div class="gate">
+        <div class="label">Gate 2</div>
+        <div>Design acceptance — Arnav Figma reviewed by product + Emily; stories move to Ready for Development</div>
+        <div><span class="status-pill open">Open · Sprint 4</span></div>
+      </div>
+      <div class="gate">
+        <div class="label">Gate 3</div>
+        <div>Implementation review — peer/product review after Daniel’s stories</div>
+        <div><span class="status-pill notyet">Not yet</span></div>
+      </div>
+      <div class="gate">
+        <div class="label">Gate 4</div>
+        <div>QA / UAT — Reid executes plan; no open Blocker / High on release path (Sprint 7)</div>
+        <div><span class="status-pill notyet">Not yet</span></div>
+      </div>
+      <div class="gate">
+        <div class="label">Gate 5</div>
+        <div>Internal production smoke — deploy without external enablement (Sprint 8)</div>
+        <div><span class="status-pill notyet">Not yet</span></div>
+      </div>
+      <div class="gate">
+        <div class="label">Gate 6</div>
+        <div>External pilot go/no-go — Emily records; John/Mike business sign-off as required</div>
+        <div><span class="status-pill notyet">Not yet</span></div>
+      </div>
+
+      <h3>D. Who reviews and signs off designs?</h3>
+      <ul>
+        <li><b>Author:</b> Arnav</li>
+        <li><b>Product acceptance:</b> Aswin (criteria + product rules)</li>
+        <li><b>Business / journey reality:</b> Emily (and Blue Ops as needed)</li>
+        <li><b>Package / client render fitness:</b> Reid (does the landing + HTML still look like what we deliver?)</li>
+        <li><b>Engineering feasibility:</b> Daniel (flags what Diligent IQ cannot support before we pretend otherwise)</li>
+      </ul>
+      <p class="muted">We are not using a heavy RTM stage-gate bureaucracy. We are using explicit board columns (UI/UX → Ready for Development → Review → QA/UAT) so “designed” and “buildable” are never confused with “done.”</p>
+
+      <div class="callout risk">
+        <b>Risk to name in the room</b>
+        If design review slips past early October, Sprint 5–6 upload/publish work compresses against the Dec pilot window. The mitigation is: accept a thin but complete Figma path for the consultant happy path first, then iterate confirmations — do not wait for a perfect design system.
+      </div>
+
+      <div class="notes">
+        <div class="title">Talking points</div>
+        <ul>
+          <li>“Who signed the current build?” — There is no production V1 build to sign. Sign the scope (done) and the designs (next).</li>
+          <li>“Why so many statuses?” — Borrowed the useful part of Smith’s pattern: hide neither design nor QA inside In Progress.</li>
+          <li>Offer to walk Jira epics only if they ask; otherwise stay at gate language.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 4 NEXT -->
+    <section id="next">
+      <p class="agenda-tag">Agenda 4 · ~5 minutes</p>
+      <h2>4. Next steps &amp; milestones</h2>
+
+      <h3>Immediate (now → 4 Oct)</h3>
+      <ol>
+        <li>Create / start Jira sprints correctly (Sprint 4 starts Monday 21 Sep).</li>
+        <li>Arnav delivers first-pass Figma for shelf + create + content-first.</li>
+        <li>Emily confirms journeys + publish/retract policy spikes.</li>
+        <li>Design acceptance meeting → move stories to Ready for Development.</li>
+        <li>Daniel implements C1 / C2 / C3 foundations against accepted frames.</li>
+      </ol>
+
+      <h3>Milestone map to pilot</h3>
+      <table>
+        <thead>
+          <tr><th>Milestone</th><th>Target</th><th>Owner signal</th></tr>
+        </thead>
+        <tbody>
+          <tr class="now"><td>Design pack accepted for happy path</td><td>by ~early Oct</td><td>Arnav + Emily + Aswin</td></tr>
+          <tr><td>Upload + exact preview working</td><td>18 Oct</td><td>Daniel + Reid fixtures</td></tr>
+          <tr><td>Publish / replace / retract + client open</td><td>1 Nov</td><td>Daniel</td></tr>
+          <tr><td>UAT complete, critical defects closed</td><td>15 Nov</td><td>Reid + Emily</td></tr>
+          <tr><td>Internal production smoke + support model</td><td>29 Nov</td><td>Daniel + Reid</td></tr>
+          <tr><td>Go/no-go for external pilot</td><td>late Nov</td><td>Emily (+ John/Mike)</td></tr>
+          <tr><td>External pilot live (1–3 analyses)</td><td>by mid Dec</td><td>Aswin</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Explicitly out of V1 (so we do not re-open scope)</h3>
+      <ul>
+        <li>Live analysis execution / automated nightly runs inside Atlas</li>
+        <li>In-product HTML source editor</li>
+        <li>Checkout / payment / marketplace commerce</li>
+        <li>Directus as the V1 admin/config hub (parked as V2 epic)</li>
+        <li>Atlas-owned entitlement system separate from Diligent IQ</li>
+      </ul>
+    </section>
+
+    <!-- ASK -->
+    <section id="ask">
+      <p class="agenda-tag">Close · decisions</p>
+      <h2>What we need from this call</h2>
+      <div class="callout info">
+        <b>Ask of Darragh &amp; Chris</b>
+        <ol style="margin:8px 0 0;padding-left:18px">
+          <li><b>Confirm the V1 framing</b> for senior stakeholders: Atlas V1 = secure versioned delivery of finished offline HTML analyses in Diligent IQ — not a live analytics platform.</li>
+          <li><b>Support the design gate</b>: no pressure to “just start coding” past unsigned journeys; Sprint 4 is correctly design-led.</li>
+          <li><b>Escalate if needed</b> when Emily / Blue Ops capacity blocks journey verification mid-sprint.</li>
+          <li><b>Hold the Dec pilot ambition</b> as 1–3 analyses under go/no-go — not general availability.</li>
+        </ol>
+      </div>
+
+      <h3>One-slide memory for after the call</h3>
+      <div class="grid-3">
+        <div class="stat">
+          <b>Where we are</b>
+          <span>End of Sprint 3. Scope locked. Backlog &amp; board ready. Design starts Monday.</span>
+        </div>
+        <div class="stat">
+          <b>What is owed</b>
+          <span>Arnav: Figma. Emily: journeys &amp; policy. Aswin: decisions. Daniel: build after accept.</span>
+        </div>
+        <div class="stat">
+          <b>What is not claimed</b>
+          <span>No production V1 signed build yet. Prototype ≠ release. Directus/live apps = later.</span>
+        </div>
+      </div>
+
+      <div class="notes">
+        <div class="title">If time runs short</div>
+        <ul>
+          <li>Skip epic detail. Stay on: one-liner → phase table → design ownership → “nothing in signed build” → milestone map → four asks.</li>
+          <li>Offer a follow-up 15 minutes with Arnav’s Figma when frames exist.</li>
+        </ul>
+      </div>
+    </section>
+
+    <footer>
+      Atlas Check-in briefing · 18 Sep 2026 · Confidential · Working draft for Darragh Cresham &amp; Christopher Broderick · Product Owner: Aswin Binu
+    </footer>
+  </main>
+</body>
+</html>
