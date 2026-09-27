@@ -23,10 +23,14 @@ Quantitative Research Associate | Neel Corporation, India | Sep 2025 – Present
 - Check revenue, cost, and cash-flow lines against each other inside each model before the figures are used in a feasibility discussion.
 
 Research Engineer – Optimisation and Decision Modelling | Addverb Technologies, India | Sep 2024 – Sep 2025
-- Replaced an MILP fleet-assignment solver with a C++ Branch and Bound pipeline and pruning rules, improving system throughput by 18%.
-- Designed the assignment algorithm for constrained fleet decisions, with a cost function covering distance, congestion, and fairness.
-- Wrote pruning rules that discarded branches unable to improve the best feasible assignment, which is what allowed the custom solver to replace the MILP model.
-- Compared solution quality and runtime with the previous MILP solver and set out the optimality–efficiency trade-off.
+- Worked on large-scale optimisation and constrained decision-making for fleet management systems.
+- Formulated fleet assignment as a constrained optimisation problem for allocation decisions across the fleet.
+- Designed an optimal assignment algorithm using Branch and Bound.
+- Built the cost function from distance, congestion, and fairness, so all three entered the same objective.
+- Implemented the optimisation pipeline in C++, from cost evaluation through the search to the chosen assignment.
+- Developed pruning strategies that discarded branches unable to improve the best feasible assignment.
+- Replaced the previous MILP-based solver with this pipeline and improved system throughput by 18%.
+- Analysed the optimality–efficiency trade-off between the Branch and Bound solver and the MILP solver.
 
 Machine Learning Research Intern | India Urban Data Exchange (IUDX) | May 2023 – Dec 2023
 - Designed a PATE-GAN pipeline that combines Private Aggregation of Teacher Ensembles with a generative model to produce synthetic datasets under a formal differential-privacy guarantee.
