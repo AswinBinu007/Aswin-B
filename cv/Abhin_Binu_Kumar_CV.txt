@@ -1,0 +1,78 @@
+Abhin Binu Kumar
+Kerala, India  |  abhin.b11@gmail.com  |  linkedin.com/in/abhin-b-a1700121a
+Quantitative Research  ·  Financial Modelling  ·  Sector Analysis
+
+PROFESSIONAL SUMMARY
+Mathematics and Computing graduate of the Indian Institute of Technology (IIT) Goa (CGPA 8.24/10, academic rank 5) with experience in quantitative financial analysis, multi-year financial modelling, and large-scale data analysis. Prepares feasibility and investment analysis across hospitality, agriculture, healthcare, automotive, and renewable energy, using Python and Excel for scenario analysis, break-even analysis, and debt service coverage ratio (DSCR) sensitivity. Additional experience includes C++ optimisation for operational decision systems and statistical analysis of telecom datasets of more than 6 million customer records. Academic work covers derivatives pricing, Monte Carlo simulation, time-series models, and privacy-preserving synthetic data. Currently advancing expertise in mathematical finance, stochastic modelling, and derivatives pricing through graduate study.
+
+CORE SKILLS
+Financial analysis: Financial modelling (modeling), cash-flow analysis, scenario analysis, break-even analysis, DSCR, feasibility analysis, profitability analysis, capital expenditure, investment decision support
+Markets and pricing: CAPM, systematic risk, Black–Scholes, option Greeks, geometric Brownian motion, Monte Carlo simulation, hedging sensitivity, volatility, risk management, backtesting
+Data and statistics: Statistical modelling, time-series analysis, exploratory data analysis, feature engineering, anomaly detection, churn analysis, forecasting, datasets of 6 million+ records
+Optimisation: Branch and Bound, mixed-integer linear programming (MILP), constrained optimisation (optimization), numerical methods, finite element methods, matrix methods
+Computing: Python, C++, Microsoft Excel, FreeFem
+Machine learning: LSTM sequence models, generative models, differential privacy, PATE, synthetic data
+Sectors: Hospitality, agriculture, healthcare, automotive, renewable energy, telecom, logistics and fleet operations
+
+PROFESSIONAL EXPERIENCE
+Quantitative Research Associate | Neel Corporation, India | Sep 2025 – Present
+- Conduct quantitative financial analysis for live projects in hospitality, agriculture, healthcare, automotive, and renewable energy, supporting feasibility studies and investment decisions.
+- Build and analyse multi-year financial models covering revenue, operating costs, capital expenditure, profitability, and cash-flow dynamics.
+- Use Python and Excel for scenario analysis of financing assumptions, including break-even points and debt service coverage ratio (DSCR) sensitivity, and compare project viability across those cases.
+
+Research Engineer – Optimisation and Decision Modelling | Addverb Technologies, India | Sep 2024 – Sep 2025
+- Worked on large-scale optimisation and constrained decision-making for fleet management systems.
+- Designed and implemented an optimal assignment algorithm using Branch and Bound, with a cost function covering distance, congestion, and fairness.
+- Implemented the optimisation pipeline in C++, developing pruning strategies that replaced an MILP-based solver and improved system throughput by 18%.
+- Analysed optimality–efficiency trade-offs between the Branch and Bound solver and the previous MILP approach.
+
+Machine Learning Research Intern | India Urban Data Exchange (IUDX) | May 2023 – Dec 2023
+- Designed and implemented a PATE-GAN framework by integrating Private Aggregation of Teacher Ensembles (PATE) with generative models to produce synthetic datasets with formal differential privacy guarantees.
+- Evaluated privacy–utility trade-offs using statistical and distributional metrics on sensitive datasets, including finance-related data.
+- Focused on privacy-aware machine learning and collaborated with researchers on responsible AI deployment.
+- Presented the work at the Symposium on Data for Public Good, Indian Institute of Science (IISc) Bangalore.
+
+Linear Algebra Tutor | Unacademy | Jan 2023 – Feb 2023
+- Taught vector spaces, eigenvalues, eigenvectors, and matrix factorisation.
+
+Data Analyst Intern | 6D Technologies, India | Jul 2022 – Aug 2022
+- Analysed churn behaviour in datasets of more than 6 million customers using statistical modelling, exploratory data analysis, and time-series techniques.
+- Performed feature analysis and anomaly detection on large-scale telecom data using Python pipelines built for high-volume, noisy datasets.
+
+SELECTED PROJECTS
+Finite Element Methods (FEM) for Solving Partial Differential Equations | Academic Project, IIT Goa | Dec 2023 – May 2024
+- Implemented Finite Element Method formulations in FreeFem to solve partial differential equations, modelling systems such as heat transfer and electrostatics.
+- Applied matrix assembly, decomposition, and stability analysis to large linear systems.
+- Conducted stability, convergence, and error analysis for the numerical schemes.
+
+Algorithmic Trading System with Machine Learning | IIT Goa | Dec 2023 – Apr 2024
+- Designed an end-to-end algorithmic trading system covering data ingestion, feature engineering, signal generation, execution, and risk management.
+- Implemented LSTM-based sequence models for financial time series and integrated them with volatility-adjusted position sizing, stop-loss rules, and drawdown constraints.
+- Built a modular Python backtesting pipeline to evaluate strategies across different market conditions.
+
+Mathematical Finance and Asset Pricing Models | Course project, Computational Finance: An Introduction to Option Pricing, IIT Goa | Feb 2023 – May 2023
+- Studied the Capital Asset Pricing Model (CAPM) and risk–return trade-offs, including the role of systematic risk in expected asset returns.
+- Implemented Black–Scholes option pricing and derived analytical prices and Greeks under geometric Brownian motion.
+- Developed Monte Carlo simulations for derivative pricing, validated them against closed-form solutions, and analysed option sensitivity to volatility, interest rates, and time to maturity for hedging.
+
+EDUCATION
+Bachelor of Technology in Mathematics and Computing | Indian Institute of Technology (IIT) Goa, India | 2020 – 2024
+CGPA: 8.24 / 10  ·  Academic rank: 5th
+Relevant coursework: Mathematics and finance: Linear Algebra, Probability and Statistics, Calculus, Differential Equations, Numerical Analysis, Computational Finance (Brownian motion, Itô’s lemma, stochastic differential equations, Feynman–Kac, Black–Scholes), Complex Analysis, Discrete Mathematics. Computing and data: Algorithm Design, Data Structures and Algorithms, Econometric Data Science, Machine Learning, Theory of Computation, Introduction to Computing.
+
+COURSES AND CERTIFICATIONS
+Udemy and Coursera
+- Introduction to Risk Management
+- Introduction to Time Series and Forecasting
+- Algorithmic Trading and Quantitative Analysis Using Python
+- Mathematics for Machine Learning and Data Science Specialization
+
+CONFERENCE PRESENTATION
+Symposium on Data for Public Good, Indian Institute of Science (IISc) Bangalore | Nov 2023
+Topic: Privacy-Preserving Synthetic Data using PATE-GAN
+
+ACHIEVEMENTS
+- Prime Minister’s Scholarship Scheme (PMSS), Government of India, awarded for academic merit during undergraduate studies.
+- Qualified JEE Advanced, the national entrance examination for the Indian Institutes of Technology.
+- Captain, IIT Goa Football Team. Represented the institute at the Inter-IIT Sports Meet.
+- State-level chess player. Secured 27th rank in the State Chess Championship.
